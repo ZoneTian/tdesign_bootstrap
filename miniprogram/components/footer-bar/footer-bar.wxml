@@ -1,4 +1,4 @@
-<view class="footer-bar">
+<view class="footer-bar {{hasHomeIndicator ? 'has-home-indicator' : ''}}">
   <view class="tab-item__item {{active === 0 ? 'footer-bar__item--active' : ''}}" bindtap="onTapHome">
     <image class="footer-bar__icon" src="{{ active === 0 ? 'https://qiniustatic.womenshike.top/footer-bar-home-active.png' : 'https://qiniustatic.womenshike.top/footer-bar-home.png' }}" />
     <text class="footer-bar__label">主页</text>
@@ -7,7 +7,8 @@
     <image class="footer-bar__icon" src="{{ active === 1 ? 'https://qiniustatic.womenshike.top/footer-bar-campaign-active.png' : 'https://qiniustatic.womenshike.top/footer-bar-campaign.png' }}" />
     <text class="footer-bar__label">活动</text>
   </view>
-  <view class="tab-item__item {{active === 2 ? 'footer-bar__item--active' : ''}}" bindtap="onTapMessage">
+  
+  <view class="tab-item__item {{active === 2 ? 'footer-bar__item--active' : ''}}" bindtap="onTapMessage" wx:if="{{false}}">
     
     <!-- <view class="footer-bar__badge" wx:if="{{unreadCount > 0}}"> -->
     <view class="footer-bar__badge-dot" wx:if="{{hasUnread}}"></view>
@@ -15,7 +16,8 @@
 
     <image class="footer-bar__icon" src="{{ active === 2 ? 'https://qiniustatic.womenshike.top/footer-bar-message-active.png' : 'https://qiniustatic.womenshike.top/footer-bar-message.png' }}" />
     <text class="footer-bar__label">消息</text>
-  </view>
+  </view> 
+  
   <view class="tab-item__item {{active === 3 ? 'footer-bar__item--active' : ''}}" bindtap="onTapProfile">
     <image class="footer-bar__icon" src="{{ active === 3 ? 'https://qiniustatic.womenshike.top/footer-bar-account-active.png' : 'https://qiniustatic.womenshike.top/footer-bar-account.png' }}" />
     <text class="footer-bar__label">我的</text>

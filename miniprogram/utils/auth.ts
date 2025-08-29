@@ -7,6 +7,28 @@ export interface SocialLogin {
   openid: string;
   refreshToken: string;
   userId: number;
+  registeredFlag: boolean; // 标识用户是否已经注册
+  sessionKey: string; // 会话密钥，用于解密用户敏感信息
+  token: string; // 用户登录凭证，用于后续接口的身份验证
+  userInfo?: {
+    id: number; // 主键id
+    customerSerial: string; // 用户编码
+    school: string; // 学校
+    academics: string; // 学历/学术水平
+    registrationTime: string; // 注册时间
+    academicReviewStatus: number; // 学历认证状态: 0.待审核 1.已通过 2.未通过
+    photoReviewStatus: number; // 照片审核状态: 0.待审核 1.已通过 2.未通过
+    openId: string; // 用户唯一标识
+    unionId: string; // 用户在开放平台的唯一标识符
+    nickName: string; // 用户昵称
+    avatarUrl: string; // 用户头像图片URL
+    gender: number; // 用户性别 0未知 1男性 2女性
+    city: string; // 用户所在城市
+    province: string; // 用户所在省份
+    country: string; // 用户所在国家
+    language: string; // 语言
+    telephone: string; // 手机号  
+  };
 }
 
 /**

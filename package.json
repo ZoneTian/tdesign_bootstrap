@@ -3,7 +3,14 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "tree": "tree -l 4 -o tree.txt --ignore miniprogram/miniprogram_npm/*"
+    "tree": "tree -l 4 -o tree.txt --ignore miniprogram/miniprogram_npm/*",
+    "test": "cd miniprogram && jest --config tests/jest.config.js",
+    "test:watch": "cd miniprogram && jest --config tests/jest.config.js --watch",
+    "test:coverage": "cd miniprogram && jest --config tests/jest.config.js --coverage",
+    "test:ci": "cd miniprogram && jest --config tests/jest.config.js --ci --coverage --watchAll=false",
+    "test:debug": "cd miniprogram && jest --config tests/jest.config.js --verbose",
+    "test:debounce": "cd miniprogram && jest --config tests/jest.config.js tests/utils/debounce.test.ts",
+    "test:config": "cd miniprogram && jest --config tests/jest.config.js tests/utils/debounce-config.test.ts"
   },
   "keywords": [],
   "author": "",
@@ -12,12 +19,16 @@
     "tdesign-miniprogram": "^1.9.2"
   },
   "devDependencies": {
+    "@types/jest": "^30.0.0",
     "@typescript-eslint/eslint-plugin": "^8.34.1",
     "@typescript-eslint/parser": "^8.34.1",
     "eslint": "^9.29.0",
     "eslint-config-prettier": "^10.1.5",
+    "jest": "^30.0.5",
     "prettier": "^3.5.3",
     "prettier-plugin-css-order": "^2.1.2",
-    "tree-cli": "^0.6.7"
+    "tree-cli": "^0.6.7",
+    "ts-jest": "^29.4.1",
+    "typescript": "^5.8.3"
   }
 }

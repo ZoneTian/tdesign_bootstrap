@@ -150,6 +150,7 @@ page {
     display: flex;
     flex-direction: column;
     .px2rpx(gap, 10);
+     .px2rpx(padding-bottom, 100);
 
     // section and content
 
@@ -249,11 +250,18 @@ page {
   .px2rpx(margin-right, -20);
   background: #fff;
   .px2rpx(padding-top, 8);
-  .padding-sides();
+    .px2rpx(padding-left, 20);
+  .px2rpx(padding-right, 20);
   display: flex;
   flex-direction: row;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
 
   .event-info__action {
+    padding-left: 20px;
     display: flex;
     flex-direction: row;
     flex: 1;
@@ -272,11 +280,45 @@ page {
       .px2rpx(height,17);
     }
     .event-info__action-share {
+      padding: 0;
+      margin: 0;
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+      text-align: inherit;
+      color: inherit;
+      font: inherit;
+      line-height: inherit;
+      -webkit-tap-highlight-color: transparent;
+      tap-highlight-color: transparent;
+      .font-group(12, 400);
+      color: #979797;
+        /* 移除边框 */
+      border: none;
+      /* 移除点击时的默认边框效果 */
+      outline: none;
+      /* 清除默认背景色 */
+      background-color: transparent;
+      /* 清除按钮内边距（可选，根据需求调整） */
+      padding: 0;
+      /* 清除默认的圆角（可选） */
+      border-radius: 0;
+
+    }
+    .event-info__action-share::after{
+      border: none;
+      /* 移除点击时的默认边框效果 */
+      outline: none;
     }
     .event-info__action-my {
     }
   }
   .event-info__action-join {
+    margin-right: 20px;
     .size(232, 44);
     .specially-button-style();
     .px2rpx(border-radius, 12);
@@ -286,11 +328,18 @@ page {
     display: flex;
     align-items: center;
     justify-content: center;
+    
+    &.disabled {
+      background: #CCCCCC;
+      background-image: none;
+      color: #fff;
+      cursor: not-allowed;
+    }
   }
 }
 
 .event-info__body.fixed {
-  .px2rpx(padding-bottom, 20);
+  .px2rpx(padding-bottom, 100);
 }
 
 .event-info__footer.fixed {
@@ -299,4 +348,6 @@ page {
   .px2rpx(left, 20);
   .px2rpx(right, 20);
   position: fixed;
+  
+
 }

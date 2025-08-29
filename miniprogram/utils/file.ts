@@ -3,6 +3,29 @@ import * as env from "./env";
 const { apiHost } = env.getEnv();
 
 /**
+ * 压缩图片
+ * @param filePath 图片路径
+ * @param quality 压缩质量(0-100)，值越小，压缩率越高，图片质量越低
+ * @returns 压缩后的图片路径
+ */
+export function compressImage(filePath: string, quality: number = 3): Promise<string> {
+  return new Promise((resolve, reject) => {
+    wx.compressImage({
+      src: filePath,
+      quality:90,
+      success: (res) => {
+        resolve(res.tempFilePath);
+      },
+      fail: (err) => {
+        console.error('图片压缩失败:', err);
+        // 如果压缩失败，返回原图片路径
+        resolve(filePath);
+      }
+    });
+  });
+}
+
+/**
  * 上传文件并返回上传地址，同时支持上传进度监听
  * @param options 上传配置
  */
@@ -21,7 +44,7 @@ export function uploadFileWithProgress(options: {
     onProgress,
   } = options;
 
-  const url = `${apiHost}/app-api/infra/file/upload`;
+  const url = `${apiHost}//v1/qiniu/uploadIMG`;
 
   return new Promise((resolve, reject) => {
     const token = wx.getStorageSync("ACCESS_TOKEN");

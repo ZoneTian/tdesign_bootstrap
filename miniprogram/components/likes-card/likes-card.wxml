@@ -1,7 +1,7 @@
 <view class="like-card-group">
   <view wx:for="{{items}}" wx:for-index="index" wx:key="index" class="likes-items">
-    <image src="{{item.url}}" class="card-image" />
-    <view class="nickname">{{item.nickname}}</view>
+    <image src="{{item.avatarUrl}}" class="card-image" />
+    <view class="nickname">{{item.nickName}}</view>
     <view class="school">{{item.school}}</view>
   </view>
 </view>

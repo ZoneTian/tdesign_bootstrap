@@ -1,5 +1,7 @@
 import * as env from "./env";
 import { checkAuthorization } from "./funcHelper";
+import { getUserID } from "./auth";
+import { loginPromise } from '../app';
 
 // 从 env 获取基础 API 地址
 const { apiHost } = env.getEnv();
@@ -17,6 +19,10 @@ export interface RequestOptions {
    * 显式重试次数，默认不重试
    */
   retryCount?: number;
+  /**
+   * 是否跳过登录等待
+   */
+  skipLoginWait?: boolean;
 }
 
 /**
@@ -28,7 +34,10 @@ function buildHeaders(
 ): Record<string, string> {
   const header: Record<string, string> = { "Content-Type": contentType };
   const token = wx.getStorageSync("ACCESS_TOKEN") || "";
-  if (token) header.Authorization = `Bearer ${token}`;
+  if (token) {
+    header.Authorization = `Bearer ${token}`;
+    header["api-access-token"] = token; // 添加 api-access-token 请求头
+  }
   if (customHeaders) Object.assign(header, customHeaders);
   return header;
 }
@@ -45,16 +54,55 @@ export function request<T = any>(options: RequestOptions): Promise<T> {
     headers,
     retryCount = 0,
   } = options;
-  const finalUrl = `${apiHost}${url}`;
+  
+  // 获取用户ID
+  let userId = data?.userId ? data.userId :  getUserID();
+  // 如果用户已登录且有userId，将其添加到请求参数中
+  let finalData = { ...data };
+  if (userId) {
+    if (method === "GET") {
+      // 对于GET请求，将userId添加到URL中
+      const separator = url.includes('?') ? '&' : '?';
+      options.url = `${url}${separator}userId=${userId}`;
+    } else {
+      // 对于其他请求方法，将userId添加到请求体中
+      finalData = { ...finalData, userId };
+    }
+  }
+  
+  const finalUrl = `${apiHost}${options.url}`;
 
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
+    // 等待登录完成 - 如果不是登录请求
+    if (!options.skipLoginWait) {
+      await loginPromise;
+    }
+    
     const attempt = (retriesLeft: number) => {
+      // 请求前打印入参
+      console.log('【请求开始】', {
+        url: finalUrl,
+        method,
+        headers: buildHeaders(contentType, headers),
+        data: finalData,
+        timestamp: new Date().toISOString()
+      });
+      
       wx.request({
         url: finalUrl,
-        data,
+        data: finalData,
         method,
         header: buildHeaders(contentType, headers),
         success: (res) => {
+          // 请求后打印出参
+          console.log('【请求成功】', {
+            url: finalUrl,
+            method,
+            statusCode: res.statusCode,
+            responseData: res.data,
+            timestamp: new Date().toISOString()
+          });
+          
           const { statusCode, data: resData } = res;
           if (statusCode === 200) {
             if (
@@ -80,6 +128,8 @@ export function request<T = any>(options: RequestOptions): Promise<T> {
           }
         },
         fail: (err) => {
+          console.log(err, 'zone');
+          
           if (retriesLeft > 0) {
             attempt(retriesLeft - 1);
           } else {
@@ -121,6 +171,9 @@ export async function requestWithRetry<T = any>(
     mockApi = null,
   } = options;
   if (mockApi != null) return mockApi;
+
+  // 等待登录完成
+  await loginPromise;
 
   // 超时包装
   const timeoutPromise = (p: Promise<any>) =>

@@ -8,7 +8,8 @@
     "pages/photo-upload/photo-upload",
     "pages/index/index",
     "pages/logs/logs",
-    "pages/welcome/welcome"
+    "pages/welcome/welcome",
+    "pages/profile-edit/profile-edit"
   ],
   "subPackages": [
     {
@@ -22,6 +23,7 @@
         "pages/settings/settings",
         "pages/my-events/my-events",
         "pages/edit-profile/edit-profile",
+        "pages/edit-profile/edit-text",
         "pages/edit-private/edit-private",
         "pages/attendee-list/attendee-list",
         "pages/chat/chat",

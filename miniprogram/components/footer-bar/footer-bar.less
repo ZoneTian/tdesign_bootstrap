@@ -3,20 +3,35 @@
 
 .footer-bar {
   position: fixed; /* 固定在底部 */
-  .px2rpx(height, @footer-height);
   bottom: 0;
+  left: 0;
   width: 100%;
   display: flex;
   background-color: #fff; /* 背景色 */
+  box-sizing: border-box; /* 使用border-box确保一致的高度计算 */
+  
+  /* 统一设置高度 */
+  height: 160rpx; /* 进一步增加高度，确保图标完全显示 */
+  // padding-top: 10rpx; /* 顶部内边距，确保图标位置正确 */
+  
+  /* 有Home Indicator的设备添加安全区域 */
+  &.has-home-indicator {
+    padding-bottom: 30rpx; /* 适配iPhone底部安全区域 */
+  }
+  
+  /* 没有Home Indicator的设备添加固定的底部内边距 */
+  &:not(.has-home-indicator) {
+    padding-bottom: 6rpx; /* 添加少量内边距，确保美观 */
+  }
 
   .tab-item__item {
     flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    // justify-content: center;
+    justify-content: center; /* 添加垂直居中 */
     color: #888888; /* 未选中时文字颜色 */
-    .px2rpx(padding-top, 14);
+    .px2rpx(padding-top, 0); /* 移除顶部内边距，使用justify-content居中 */
     .font-group(24);
     position: relative;
 
@@ -32,8 +47,9 @@
   }
 
   .footer-bar__icon {
-    .px2rpx(width, 24);
-    .px2rpx(height, 24);
+    .px2rpx(width, 24); /* 增加图标尺寸 */
+    .px2rpx(height, 24); /* 增加图标尺寸 */
+    margin-bottom: 8rpx; /* 添加底部间距，与文字分开 */
   }
 
   .footer-bar__label {

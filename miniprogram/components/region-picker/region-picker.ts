@@ -1,189 +1,300 @@
-import { getArea } from '../../utils/api';
-
-interface AreaNode {
-  id: number;
-  name: string;
-  children: AreaNode[];
-}
-interface GetAreaResponse {
-  code: number;
-  data: AreaNode[];
-}
+// 使用静态数据作为省市选择器的数据源
+const REGION_DATA = [
+    {
+        "province": "北京市",
+        "city": []
+    },
+    {
+        "province": "天津市",
+        "city": []
+    },
+    {
+        "province": "河北省",
+        "city": ["石家庄市", "唐山市", "秦皇岛市", "邯郸市", "邢台市", "保定市", "张家口市", "承德市", "沧州市", "廊坊市", "衡水市"]
+    },
+    {
+        "province": "山西省",
+        "city": ["太原市", "大同市", "阳泉市", "长治市", "晋城市", "朔州市", "晋中市", "运城市", "忻州市", "临汾市", "吕梁市"]
+    },
+    {
+        "province": "内蒙古自治区",
+        "city": ["呼和浩特市", "包头市", "乌海市", "赤峰市", "通辽市", "鄂尔多斯市", "呼伦贝尔市", "巴彦淖尔市", "乌兰察布市", "兴安盟", "锡林郭勒盟", "阿拉善盟"]
+    },
+    {
+        "province": "辽宁省",
+        "city": ["沈阳市", "大连市", "鞍山市", "抚顺市", "本溪市", "丹东市", "锦州市", "营口市", "阜新市", "辽阳市", "盘锦市", "铁岭市", "朝阳市", "葫芦岛市"]
+    },
+    {
+        "province": "吉林省",
+        "city": ["长春市", "吉林市", "四平市", "辽源市", "通化市", "白山市", "松原市", "白城市", "延边朝鲜族自治州"]
+    },
+    {
+        "province": "黑龙江省",
+        "city": ["哈尔滨市", "齐齐哈尔市", "鸡西市", "鹤岗市", "双鸭山市", "大庆市", "伊春市", "佳木斯市", "七台河市", "牡丹江市", "黑河市", "绥化市", "大兴安岭地区"]
+    },
+    {
+        "province": "上海市",
+        "city": []
+    },
+    {
+        "province": "江苏省",
+        "city": ["南京市", "无锡市", "徐州市", "常州市", "苏州市", "南通市", "连云港市", "淮安市", "盐城市", "扬州市", "镇江市", "泰州市", "宿迁市"]
+    },
+    {
+        "province": "浙江省",
+        "city": ["杭州市", "宁波市", "温州市", "嘉兴市", "湖州市", "绍兴市", "金华市", "衢州市", "舟山市", "台州市", "丽水市"]
+    },
+    {
+        "province": "安徽省",
+        "city": ["合肥市", "芜湖市", "蚌埠市", "淮南市", "马鞍山市", "淮北市", "铜陵市", "安庆市", "黄山市", "滁州市", "阜阳市", "宿州市", "六安市", "亳州市", "池州市", "宣城市"]
+    },
+    {
+        "province": "福建省",
+        "city": ["福州市", "厦门市", "莆田市", "三明市", "泉州市", "漳州市", "南平市", "龙岩市", "宁德市"]
+    },
+    {
+        "province": "江西省",
+        "city": ["南昌市", "景德镇市", "萍乡市", "九江市", "新余市", "鹰潭市", "赣州市", "吉安市", "宜春市", "抚州市", "上饶市"]
+    },
+    {
+        "province": "山东省",
+        "city": ["济南市", "青岛市", "淄博市", "枣庄市", "东营市", "烟台市", "潍坊市", "济宁市", "泰安市", "威海市", "日照市", "临沂市", "德州市", "聊城市", "滨州市", "菏泽市"]
+    },
+    {
+        "province": "河南省",
+        "city": ["郑州市", "开封市", "洛阳市", "平顶山市", "安阳市", "鹤壁市", "新乡市", "焦作市", "濮阳市", "许昌市", "漯河市", "三门峡市", "南阳市", "商丘市", "信阳市", "周口市", "驻马店市"]
+    },
+    {
+        "province": "湖北省",
+        "city": ["武汉市", "黄石市", "十堰市", "宜昌市", "襄阳市", "鄂州市", "荆门市", "孝感市", "荆州市", "黄冈市", "咸宁市", "随州市", "恩施土家族苗族自治州"]
+    },
+    {
+        "province": "湖南省",
+        "city": ["长沙市", "株洲市", "湘潭市", "衡阳市", "邵阳市", "岳阳市", "常德市", "张家界市", "益阳市", "郴州市", "永州市", "怀化市", "娄底市"]
+    },
+    {
+        "province": "广东省",
+        "city": ["广州市", "韶关市", "深圳市", "珠海市", "汕头市", "佛山市", "江门市", "湛江市", "茂名市", "肇庆市", "惠州市", "梅州市", "汕尾市", "河源市", "阳江市", "清远市", "东莞市", "中山市", "潮州市", "揭阳市", "云浮市"]
+    },
+    {
+        "province": "广西壮族自治区",
+        "city": ["南宁市", "柳州市", "桂林市", "梧州市", "北海市", "防城港市", "钦州市", "贵港市", "玉林市", "百色市", "贺州市", "河池市", "来宾市", "崇左市"]
+    },
+    {
+        "province": "海南省",
+        "city": ["海口市", "三亚市", "三沙市", "儋州市"]
+    },
+    {
+        "province": "重庆市",
+        "city": []
+    },
+    {
+        "province": "四川省",
+        "city": ["成都市", "自贡市", "攀枝花市", "泸州市", "德阳市", "绵阳市", "广元市", "遂宁市", "内江市", "乐山市", "南充市", "眉山市", "宜宾市", "广安市", "达州市", "雅安市", "巴中市", "资阳市"]
+    },
+    {
+        "province": "贵州省",
+        "city": ["贵阳市", "六盘水市", "遵义市", "安顺市", "毕节市", "铜仁市"]
+    },
+    {
+        "province": "云南省",
+        "city": ["昆明市", "曲靖市", "玉溪市", "保山市", "昭通市", "丽江市", "普洱市", "临沧市"]
+    },
+    {
+        "province": "西藏自治区",
+        "city": ["拉萨市", "日喀则市", "昌都市", "林芝市", "山南市", "那曲市", "阿里地区"]
+    },
+    {
+        "province": "陕西省",
+        "city": ["西安市", "铜川市", "宝鸡市", "咸阳市", "渭南市", "延安市", "汉中市", "榆林市", "安康市", "商洛市"]
+    },
+    {
+        "province": "甘肃省",
+        "city": ["兰州市", "嘉峪关市", "金昌市", "白银市", "天水市", "武威市", "张掖市", "平凉市", "酒泉市", "庆阳市", "定西市", "陇南市"]
+    },
+    {
+        "province": "青海省",
+        "city": ["西宁市", "海东市"]
+    },
+    {
+        "province": "宁夏回族自治区",
+        "city": ["银川市", "石嘴山市", "吴忠市", "固原市", "中卫市"]
+    },
+    {
+        "province": "新疆维吾尔自治区",
+        "city": ["乌鲁木齐市", "克拉玛依市", "吐鲁番市", "哈密市"]
+    },
+    {
+        "province": "台湾省",
+        "city": ["台北市", "高雄市", "台中市", "台南市", "新竹市", "嘉义市"]
+    },
+    {
+        "province": "香港特别行政区",
+        "city": []
+    },
+    {
+        "province": "澳门特别行政区",
+        "city": []
+    }
+];
 
 interface PickerChangeDetail {
-  value: string[]; // ['110000','110100','110101']
-  text: string[]; // '北京市 北京市 东城区'
+  value: string[]; // ['北京市','北京市']
+  text: string[]; // '北京市 北京市'
 }
-
-// 你原来的 flat 结构
-interface AreaListRaw {
-  provinces: Record<string, string>;
-  cities: Record<string, string>;
-  counties: Record<string, string>;
-}
-
-let _areaList: AreaListRaw = {
-  provinces: {},
-  cities: {},
-  counties: {},
-};
-
-// const getOptions = (obj: Record<string, string>, filter?: (opt: Option) => boolean): Option[] => {
-//   const res: Option[] = Object.keys(obj).map((key) => ({
-//     value: key,
-//     label: obj[key],
-//   }));
-//   return filter ? res.filter(filter) : res;
-// };
-
-// const match = (v1: string | number, v2: string | number, size: number): boolean => {
-//   return v1.toString().slice(0, size) === v2.toString().slice(0, size);
-// };
 
 Component({
+  properties: {
+    title: {
+      type: String,
+      value: '选择地区'
+    }
+  },
+  
   data: {
     areaText: '' as string,
     areaValue: [] as string[],
     provinces: [] as Option[],
     cities: [] as Option[],
-    counties: [] as Option[],
+    areaVisible: false,
+    field: '',
+    currentProvinceIndex: 0,
+    selectedProvinceIndex: 0,
+    selectedCityIndex: 0
   },
 
   lifetimes: {
-    async ready() {
-      await this.initHometownAndLocationOptions();
-      this.init();
+    ready() {
+      this.initProvinces();
     },
   },
 
   methods: {
-    async initHometownAndLocationOptions(): Promise<void> {
+    // 初始化省份数据
+    initProvinces(): void {
       try {
-        const response = (await getArea()) as GetAreaResponse;
-        if (response.code !== 0 || !Array.isArray(response.data)) {
-          throw new Error('接口 data 格式不对');
-        }
-
-        const provinces: Record<string, string> = {};
-        const cities: Record<string, string> = {};
-        const counties: Record<string, string> = {};
-
-        response.data.forEach((prov) => {
-          const p = prov.id.toString();
-          provinces[p] = prov.name;
-
-          prov.children.forEach((cty) => {
-            const c = cty.id.toString();
-            cities[c] = cty.name;
-
-            cty.children.forEach((cnty) => {
-              const d = cnty.id.toString();
-              counties[d] = cnty.name;
-            });
-          });
-        });
-
-        _areaList = { provinces, cities, counties };
-
-        const provinceOptions = Object.entries(provinces).map(([value, label]) => ({
-          value,
-          label,
-        }));
-        const cityOptions = Object.entries(cities).map(([value, label]) => ({
-          value,
-          label,
-        }));
-        const countyOptions = Object.entries(counties).map(([value, label]) => ({
-          value,
-          label,
+        // 转换为选择器需要的格式
+        const provinceOptions = REGION_DATA.map((province, index) => ({
+          value: province.province,
+          label: province.province,
+          index
         }));
 
         this.setData({
           provinces: provinceOptions,
-          cities: cityOptions,
-          counties: countyOptions,
+          cities: [] // 初始化时清空城市列表
         });
       } catch (err) {
-        console.error('获取地区数据失败:', err);
+        console.error('初始化省份数据失败:', err);
       }
     },
 
-    init(): void {},
+    // 根据省份索引获取城市数据
+    getCitiesByProvince(provinceIndex: number): void {
+      try {
+        const province = REGION_DATA[provinceIndex];
+        if (!province) {
+          throw new Error('省份数据不存在');
+        }
+
+        // 如果是直辖市等没有下级城市的情况，使用省份名作为城市名
+        let cityOptions = [];
+        if (province.city.length === 0) {
+          cityOptions = [{
+            value: province.province,
+            label: province.province
+          }];
+        } else {
+          // 转换为选择器需要的格式
+          cityOptions = province.city.map(city => ({
+            value: city,
+            label: city
+          }));
+        }
+
+        this.setData({
+          cities: cityOptions,
+          currentProvinceIndex: provinceIndex,
+          selectedProvinceIndex: provinceIndex,
+          selectedCityIndex: 0 // 重置城市索引
+        });
+      } catch (err) {
+        console.error('获取城市数据失败:', err);
+      }
+    },
 
     /**
      * 列联动：根据滚动的列和索引，重新筛选下一列数据
      */
     onColumnChange(e: WechatMiniprogram.CustomEvent<{ column: number; index: number }>) {
       const { column, index } = e.detail;
-      const { provinces, cities } = this.data;
-
+      
       if (column === 0) {
         // 滚动省列
-        const pCode = provinces[index].value;
-        const filteredCities = Object.entries(_areaList.cities)
-          .filter(([code]) => code.startsWith(pCode.slice(0, 2)))
-          .map(([value, label]) => ({ value, label }));
-        const firstCityCode = filteredCities[0]?.value;
-        const filteredCounties = firstCityCode
-          ? Object.entries(_areaList.counties)
-              .filter(([code]) => code.startsWith(firstCityCode.slice(0, 4)))
-              .map(([value, label]) => ({ value, label }))
-          : [];
-        this.setData({ cities: filteredCities, counties: filteredCounties });
-      }
-      if (column === 1) {
-        // 滚动市列
-        const cCode = cities[index].value;
-        const filteredCounties = Object.entries(_areaList.counties)
-          .filter(([code]) => code.startsWith(cCode.slice(0, 4)))
-          .map(([value, label]) => ({ value, label }));
-        this.setData({ counties: filteredCounties });
+        this.getCitiesByProvince(index);
+      } else if (column === 1) {
+        // 记录选中的城市索引
+        this.setData({
+          selectedCityIndex: index
+        });
       }
     },
 
     onPickerChange(e: WechatMiniprogram.PickerChange): void {
-      const codes: string[] = e.detail.value as string[]; // 直接拿到 code 数组
-      const { provinces, cities, counties, field } = this.data;
-
-      const labels = codes.map((code, idx) => {
-        const list = [provinces, cities, counties][idx];
-        const found = list.find((opt) => opt.value === code);
-        return found ? found.label : '';
-      });
-
+      const { selectedProvinceIndex, selectedCityIndex, provinces, cities, field } = this.data;
+      
+      // 根据索引获取选中的省市
+      const selectedProvince = provinces[selectedProvinceIndex];
+      const selectedCity = cities[selectedCityIndex];
+      
+      if (!selectedProvince) {
+        console.error('未选择省份');
+        return;
+      }
+      
+      // 获取选中的值和文本
+      let values: string[] = [selectedProvince.value];
+      let labels: string[] = [selectedProvince.label];
+      
+      // 如果选择了城市，添加城市信息
+      if (selectedCity) {
+        values.push(selectedCity.value);
+        labels.push(selectedCity.label);
+      }
+      
       this.setData({
         areaVisible: false,
       });
-
+      
       const detail: PickerChangeDetail = {
-        value: codes,
+        value: values,
         text: labels,
       };
-
+      
       if (field === 'hometown') {
         this.triggerEvent('hometownChange', detail);
-      }
-      if (field === 'location') {
+      } else if (field === 'location') {
         this.triggerEvent('locationChange', detail);
-      }
-      if (field === 'position') {
+      } else if (field === 'position') {
         this.triggerEvent('positionChange', detail);
       }
     },
 
-    onPickerCancel(e: WechatMiniprogram.PickerCancel): void {
-      console.log('picker cancel', e.detail);
+    onPickerCancel(): void {
       this.setData({
         areaVisible: false,
       });
-
-      if (this.data.areaValue.length) return;
-      this.init();
     },
 
     onAreaPicker(field: string) {
-      // location or hometown
-      this.setData({ areaVisible: true, field });
+      // 打开选择器时，默认选择第一个省份并加载其城市
+      this.getCitiesByProvince(0);
+      
+      // 设置字段和显示状态
+      this.setData({ 
+        areaVisible: true, 
+        field
+      });
     },
   },
 });

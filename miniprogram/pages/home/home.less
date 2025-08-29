@@ -14,16 +14,17 @@ page {
   flex-direction: column;
 
   --td-message-content-font-color: var(--1, #fa87ac);
+  // background: linear-gradient(269.3deg, #FFAAC6 0.6%, #A6C3FF 98.92%);
 
   // --td-message-box-shadow: 0px 4px 25px rgba(145, 150, 163, 0.25);
 }
 
 .home {
-  // height: 100vh;
-  .px2rpx(height, 664);
-  .px2rpx(padding-top, 5);
-  .px2rpx(padding-bottom, @safe-bottom-with-footer);
+  height: calc(100vh - var(--footer-height) - 44px); /* 44px 是 navigation-bar 的高度 */
   position: relative;
+
+  // 确保内容不会被底部导航栏遮挡
+  padding-bottom: 0;
 
   .home_active {
     .px2rpx(width, 50);
@@ -38,9 +39,10 @@ page {
       .px2rpx(width, 50);
       .px2rpx(height, 50);
       background-image: url(https://qiniustatic.womenshike.top/icon_home_pink.png);
-      background-repeat: no-repeat;
-      background-position: top;
+      // background-repeat: no-repeat;
+      background-position: center;
       background-size: contain;
+      background-color: linear-gradient(269.3deg, #ffaac6 0.6%, #a6c3ff 98.92%);
 
       position: absolute;
       top: 0;
@@ -57,6 +59,12 @@ page {
       bottom: 0;
     }
   }
+}
+
+// 底部占位元素样式
+.footer-placeholder {
+  width: 100%;
+  background-color: transparent;
 }
 
 .slot-title {
@@ -110,7 +118,7 @@ page {
 }
 
 .swiper {
-  .px2rpx(height, 664);
+  height: 100%;
   width: 100%;
 }
 
@@ -120,25 +128,29 @@ page {
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+
   > image {
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: auto;
+    object-fit: contain;
+    position: relative;
+    z-index: 1;
   }
 
   .swiper-info {
     position: absolute;
-    .px2rpx(right, 20);
-    .px2rpx(bottom, 12);
+    .px2rpx(bottom, 72);
     .px2rpx(left, 20);
-
+    z-index: 2;
     > .nickname {
       .font-group(24, 500);
-      color: #fff;
+      color: #A6C3FF;
     }
     > .activity {
       .px2rpx(height, 40);
       .px2rpx(border-radius, 36);
-
+      .padding(0, 6, 0, 6);
       background: rgba(0, 0, 0, 0.4);
 
       display: flex;
@@ -157,7 +169,7 @@ page {
       .act-user {
         color: #fa87ac;
         .font-group(14, 500);
-        .px2rpx(margin-left, 46);
+        .px2rpx(margin-left, 36);
       }
       .act-info {
         color: #72a0ff;
@@ -170,6 +182,7 @@ page {
       .act-status {
         display: flex;
         color: #fff;
+        .padding(0, 6, 0, 0);
         .font-group(14, 500);
         align-content: center;
         .highlight {
@@ -183,4 +196,26 @@ page {
 .t-message {
   .border-group(2, solid, var(--1, #FA87AC));
   .font-group(18, 600);
+}
+.activity-popup__buttom-slot {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.activity-popup__buttom-button{
+   width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+// 移除所有button的点击效果
+button {
+  &:active {
+    opacity: 1;
+    transform: none;
+  }
 }

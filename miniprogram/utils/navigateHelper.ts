@@ -1,27 +1,71 @@
+// 页面栈管理函数
+const checkPageStackAndNavigate = (url: string, forceRedirect = false) => {
+  const pages = getCurrentPages();
+
+  // 如果页面栈接近限制（微信小程序最多10层）或强制重定向，使用 redirectTo
+  if (pages.length >= 8 || forceRedirect) {
+    return wx.redirectTo({ url });
+  } else {
+    return wx.navigateTo({ url });
+  }
+};
+
 export const goWelcomeWithRedirect = () => {
+  console.log('=== navigateHelper.goWelcomeWithRedirect 被调用 ===');
+  console.log('调用时间:', new Date().toLocaleString());
+  console.log('调用栈:', new Error().stack);
+  console.log('准备重定向到欢迎页面: /pages/welcome/welcome');
+
   // 重定向去登录
-  return wx.redirectTo({
-    url: '/pages/welcome/welcome',
-  });
+  try {
+    const result = wx.redirectTo({
+      url: '/pages/welcome/welcome',
+    });
+    console.log('重定向调用成功:', result);
+    console.log('=== navigateHelper.goWelcomeWithRedirect 执行完成 ===');
+    return result;
+  } catch (error: any) {
+    console.error('重定向调用失败:', error);
+    console.error('错误详情:', {
+      message: error?.message || '未知错误',
+      stack: error?.stack || '无堆栈信息',
+      time: new Date().toLocaleString(),
+    });
+    throw error;
+  }
 };
 
 export const goWelcome = () => {
+  console.log('=== navigateHelper.goWelcome 被调用 ===');
+  console.log('调用时间:', new Date().toLocaleString());
+  console.log('调用栈:', new Error().stack);
+  console.log('准备重定向到欢迎页面: /pages/welcome/welcome');
+
   // 重定向去登录
-  return wx.redirectTo({
-    url: '/pages/welcome/welcome',
-  });
+  try {
+    const result = wx.redirectTo({
+      url: '/pages/welcome/welcome',
+    });
+    console.log('重定向调用成功:', result);
+    console.log('=== navigateHelper.goWelcome 执行完成 ===');
+    return result;
+  } catch (error: any) {
+    console.error('重定向调用失败:', error);
+    console.error('错误详情:', {
+      message: error?.message || '未知错误',
+      stack: error?.stack || '无堆栈信息',
+      time: new Date().toLocaleString(),
+    });
+    throw error;
+  }
 };
 
 export const goPersonalInfo = () => {
-  return wx.navigateTo({
-    url: '/pages/personal-info/personal-info',
-  });
+  return checkPageStackAndNavigate('/pages/personal-info/personal-info');
 };
 
 export const goPhotoUpload = () => {
-  return wx.navigateTo({
-    url: '/pages/photo-upload/photo-upload',
-  });
+  return checkPageStackAndNavigate('/pages/photo-upload/photo-upload');
 };
 
 export const goHome = () => {
@@ -49,85 +93,60 @@ export const goProfile = () => {
 };
 
 export const goLikesMe = () => {
-  return wx.navigateTo({
-    url: '/packageA/pages/likes-me/likes-me',
-  });
+  return checkPageStackAndNavigate('/packageA/pages/likes-me/likes-me');
 };
 
 export const goMyLikes = () => {
-  return wx.navigateTo({
-    url: '/packageA/pages/my-likes/my-likes',
-  });
+  return checkPageStackAndNavigate('/packageA/pages/my-likes/my-likes');
 };
 
 export const goProfileVerification = () => {
-  return wx.navigateTo({
-    url: '/packageA/pages/profile-verification/profile-verification',
-  });
+  return checkPageStackAndNavigate('/packageA/pages/profile-verification/profile-verification');
 };
 
 export const goSettings = () => {
-  return wx.navigateTo({
-    url: '/packageA/pages/settings/settings',
-  });
+  return checkPageStackAndNavigate('/packageA/pages/settings/settings');
 };
 
 export const goMyEvents = () => {
-  return wx.navigateTo({
-    url: '/packageA/pages/my-events/my-events',
-  });
+  return checkPageStackAndNavigate('/packageA/pages/my-events/my-events');
 };
 
 export const goEditProfile = () => {
-  return wx.navigateTo({
-    url: '/packageA/pages/edit-profile/edit-profile',
-  });
+  return checkPageStackAndNavigate('/packageA/pages/edit-profile/edit-profile');
 };
 
 export const goEditPrivate = () => {
-  return wx.navigateTo({
-    url: '/packageA/pages/edit-private/edit-private',
-  });
+  return checkPageStackAndNavigate('/packageA/pages/edit-private/edit-private');
 };
 
-export const goPublicProfile = () => {
-  return wx.navigateTo({
-    url: '/packageA/pages/public-profile/public-profile',
-  });
+export const goPublicProfile = (userId?: string | number) => {
+  const url = `/packageA/pages/public-profile/public-profile${userId ? `?userId=${userId}` : ''}`;
+  return checkPageStackAndNavigate(url);
 };
 
-export const goEventsInfo = () => {
-  return wx.navigateTo({
-    url: `/packageA/pages/events-info/events-info`,
-  });
+export const goEventsInfo = (eventId?: string | number) => {
+  const url = `/packageA/pages/events-info/events-info${eventId ? `?id=${eventId}` : ''}`;
+  return checkPageStackAndNavigate(url);
 };
 
 export const goChat = () => {
-  return wx.navigateTo({
-    url: `/packageA/pages/chat/chat`,
-  });
+  return checkPageStackAndNavigate('/packageA/pages/chat/chat');
 };
 
-export const goAttendeeList = () => {
-  return wx.navigateTo({
-    url: `/packageA/pages/attendee-list/attendee-list`,
-  });
+export const goAttendeeList = (activityId?: string | number) => {
+  const url = `/packageA/pages/attendee-list/attendee-list${activityId ? `?activityId=${activityId}` : ''}`;
+  return checkPageStackAndNavigate(url);
 };
 
 export const goUserAgreement = () => {
-  return wx.navigateTo({
-    url: `/packageA/pages/user-agreement/user-agreement`,
-  });
+  return checkPageStackAndNavigate('/packageA/pages/user-agreement/user-agreement');
 };
 
 export const goPrivateAgreement = () => {
-  return wx.navigateTo({
-    url: `/packageA/pages/private-agreement/private-agreement`,
-  });
+  return checkPageStackAndNavigate('/packageA/pages/private-agreement/private-agreement');
 };
 
 export const goIdentityVerification = () => {
-  return wx.navigateTo({
-    url: `/packageA/pages/identity-verification/identity-verification`,
-  });
+  return checkPageStackAndNavigate('/packageA/pages/identity-verification/identity-verification');
 };

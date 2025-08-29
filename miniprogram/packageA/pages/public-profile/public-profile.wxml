@@ -20,8 +20,8 @@
   >
     <block wx:for="{{publicProfile.items}}" wx:key="*this">
       <swiper-item>
-        <view class="swiper-item swiper-item-{{item.info.id}}">
-          <image src="{{item.path}}" mode="aspectFit|aspectFill|widthFix" lazy-load="false" />
+        <view class="swiper-item swiper-item-{{itemIndex}}">
+          <image src="{{item.socializingImgUrl || item.url}}" mode="aspectFill" lazy-load="false"  />
         </view>
       </swiper-item>
     </block>
@@ -30,10 +30,10 @@
   <view class="profile-card-list">
     <view class="profile-card profile-card__info-container">
       <view class="profile-card__header">
-        <view class="profile-card__name">秦小北</view>
+        <view class="profile-card__name">{{userDetail.nickName}}</view>
         <view class="profile-card__badges">
-          <view class="profile-card__badge profile-card__badge--verified">已认证<image src="https://qiniustatic.womenshike.top/icon_tags_approved.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" /></view>
-          <view class="profile-card__badge profile-card__badge--education">学历认证<image src="https://qiniustatic.womenshike.top/icon_tags_approved.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" /></view>
+          <view class="profile-card__badge profile-card__badge--verified"  wx-if="{{userDetail.photoReviewStatus}}">已认证<image src="https://qiniustatic.womenshike.top/icon_tags_approved.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" /></view>
+          <view class="profile-card__badge profile-card__badge--education" wx-if="{{userDetail.isEducationVerified}}">学历认证<image src="https://qiniustatic.womenshike.top/icon_tags_approved.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" /></view>
         </view>
       </view>
 
@@ -41,28 +41,28 @@
         
         <view class="profile-card__info-item">
           <image src="https://qiniustatic.womenshike.top/profile-icon-birthday.png" mode="widthFix" lazy-load="false" />
-          <span class="profile-card__label">90年 · 巨蟹座</span>
+          <span class="profile-card__label">生日 {{brithDay}}</span>
         </view>
         <view class="profile-card__info-item">
           <image src="https://qiniustatic.womenshike.top/profile-icon-height.png" mode="widthFix" lazy-load="false" />
-          <span class="profile-card__label">166cm</span>
+        <span class="profile-card__label">{{userDetail.userHeight}}cm</span>
         </view>
-        <view class="profile-card__info-item">
+        <view class="profile-card__info-item" wx:if="{{userDetail.school}}">
           <image src="https://qiniustatic.womenshike.top/profile-icon-education.png" mode="widthFix" lazy-load="false" />
-          <span class="profile-card__label">硕士 · 清华大学</span>
+          <span class="profile-card__label"> {{userDetail.school}}</span>
         </view>
         <view class="profile-card__info-item">
           <image src="https://qiniustatic.womenshike.top/profile-icon-location.png" mode="widthFix" lazy-load="false" />
-          <span class="profile-card__label">居住地 上海</span>
+          <span class="profile-card__label">居住地 {{userDetail.presentCity || '未知'}}</span>
         </view>
         <view class="profile-card__info-item">
           <image src="https://qiniustatic.womenshike.top/profile-icon-mbti.png" mode="widthFix" lazy-load="false" />
-          <span class="profile-card__label">Mbti T</span>
+          <span class="profile-card__label">{{userDetail.userMbti}}</span>
         </view>
 
       </view>
       
-      <view class="profile-card__actions">
+      <view class="profile-card__actions" wx:if="{{!isOwnProfile}}">
         <block wx:if="{{!isFollowed}}">
           <view class="profile-card__button profile-card__button--follow" bindtap="handlePopup">＋关注</view>
         </block>
@@ -73,18 +73,18 @@
       </view>
     </view>
 
-    <t-divider content="以下信息只对相互关注的好友展示" />
+    <t-divider content="以下信息只对相互关注的好友展示"  wx:if="{{!isOwnProfile || !isFollowed}}" />
 
-    <view class="profile-card" wx:if="{{isFollowed}}">
+    <view class="profile-card" wx:if="{{isOwnProfile || isFollowed}}">
       <view class="profile-section__title">自我描述</view>
-      <textarea class="profile-section__content" value="{{ selfDesc }}" placeholder="" placeholder-style="" placeholder-class="textarea-placeholder" 
+      <textarea class="profile-section__content" value="{{ userDetail.selfDescription || selfDescription }}" placeholder="" placeholder-style="" placeholder-class="textarea-placeholder" 
         disabled="true" auto-focus="false" focus="false" auto-height="" 
         bindinput="" bindfocus="" bindblur="" bindconfirm="" bindlinechange="%{15}"></textarea>
     </view>
 
-    <view class="profile-card" wx:if="{{isFollowed}}">
+    <view class="profile-card" wx:if="{{isOwnProfile ||  isFollowed}}">
       <view class="profile-section__title">交友倾向</view>
-      <textarea class="profile-section__content" value="{{ friendPref }}" placeholder="" placeholder-style="" placeholder-class="textarea-placeholder" 
+      <textarea class="profile-section__content" value="{{ userDetail.friendshipTend || friendshipTend }}" placeholder="" placeholder-style="" placeholder-class="textarea-placeholder" 
         disabled="true" auto-focus="false" focus="false" auto-height="" 
         bindinput="" bindfocus="" bindblur="" bindconfirm="" bindlinechange="%{15}"></textarea>
     </view>
@@ -93,7 +93,7 @@
 
 </view>
 
-<t-popup
+  <t-popup
   visible="{{visible}}"
   usingCustomNavbar
   bind:visible-change="onVisibleChange"
@@ -101,7 +101,7 @@
 >
   <view class="follow-modal">
     <view class="follow-modal__content">
-        <view class="follow-modal__title">秦小北</view>
+        <view class="follow-modal__title">{{userDetail.nickName}}</view>
         <view class="follow-modal__actions">
           <block wx:if="{{isFollowed}}">
             <view class="follow-modal__button follow-modal__button--primary">已关注</view>
@@ -114,3 +114,25 @@
     </view>
   </view>
 </t-popup>
+
+
+<activity-popup 
+  visible="{{showVisible}}"
+  bind:confirm="onConfirm"
+  bind:close="onClose"
+  icon="{{popup.icon}}"
+  buttonText="{{popup.buttonText}}"
+>
+  <view slot="title" class="activity-popup__title-slot">
+    {{popup.title}}
+  </view>
+
+
+    <!-- 您已经获得 <text class="activity-popup__highlight">1</text> 次免费参加活动的机会 -->
+  <view slot="subtitle" class="activity-popup__subtitle-slot">
+    不能关注对方，不能报名活动
+  </view>
+  <view slot="buttom" class="activity-popup__buttom-slot" bind:tap="onConfirm">
+     {{popup.btnText}}
+  </view>
+</activity-popup>

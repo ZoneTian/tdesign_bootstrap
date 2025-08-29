@@ -1,5 +1,15 @@
 {
   "usingComponents": {
-    "navigation-bar": "/components/navigation-bar/navigation-bar"
+    "navigation-bar": "/components/navigation-bar/navigation-bar",
+    "picker-overlay": "/components/picker-overlay/picker-overlay",
+    "t-input": "tdesign-miniprogram/input/input",
+    "t-icon": "tdesign-miniprogram/icon/icon",
+    "t-picker": "tdesign-miniprogram/picker/picker",
+    "t-picker-item": "tdesign-miniprogram/picker-item/picker-item",
+    "t-date-time-picker": "tdesign-miniprogram/date-time-picker/date-time-picker",
+    "date-picker": "/components/date-picker/date-picker",
+    "region-picker": "/components/region-picker/region-picker",
+    "t-upload": "tdesign-miniprogram/upload/upload",
+    "upload-file": "/components/upload-file/upload-file"
   }
 }

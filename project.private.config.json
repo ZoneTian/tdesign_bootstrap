@@ -3,7 +3,7 @@
   "projectname": "tdesign_template",
   "setting": {
     "compileHotReLoad": true,
-    "urlCheck": false,
+    "urlCheck": true,
     "skylineRenderEnable": true,
     "bigPackageSizeSupport": true
   },
@@ -11,11 +11,88 @@
     "miniprogram": {
       "list": [
         {
+          "name": "packageA/pages/events-info/events-info",
+          "pathName": "packageA/pages/events-info/events-info",
+          "query": "id=24",
+          "scene": null,
+          "launchMode": "default"
+        },
+        {
+          "name": "packageA/pages/events-info/events-info",
+          "pathName": "packageA/pages/events-info/events-info",
+          "query": "id=24",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
+          "name": "packageA/pages/edit-profile/edit-profile",
+          "pathName": "packageA/pages/edit-profile/edit-profile",
+          "query": "userId=10",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
+          "name": "packageA/pages/edit-profile/edit-text",
+          "pathName": "packageA/pages/edit-profile/edit-text",
+          "query": "type=self&content=&fromPage=edit-profile",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
+          "name": "packageA/pages/edit-profile/edit-profile",
+          "pathName": "packageA/pages/edit-profile/edit-profile",
+          "query": "userId=7",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
+          "name": "packageA/pages/edit-profile/edit-profile",
+          "pathName": "packageA/pages/edit-profile/edit-profile",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
+          "name": "packageA/pages/my-likes/my-likes",
+          "pathName": "packageA/pages/my-likes/my-likes",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
+          "name": "packageA/pages/my-events/my-events",
+          "pathName": "packageA/pages/my-events/my-events",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
+          "name": "packageA/pages/public-profile/public-profile",
+          "pathName": "packageA/pages/public-profile/public-profile",
+          "query": "userId=4",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
+          "name": "packageA/pages/public-profile/public-profile",
+          "pathName": "packageA/pages/public-profile/public-profile",
+          "query": "userId=4",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
+          "name": "packageA/pages/settings/settings",
+          "pathName": "packageA/pages/settings/settings",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
           "name": "packageA/pages/identity-verification/identity-verification",
           "pathName": "packageA/pages/identity-verification/identity-verification",
           "query": "",
-          "scene": null,
-          "launchMode": "default"
+          "launchMode": "default",
+          "scene": null
         },
         {
           "name": "packageA/pages/user-agreement/user-agreement",
@@ -139,5 +216,5 @@
       ]
     }
   },
-  "libVersion": "3.7.12"
+  "libVersion": "3.9.2"
 }

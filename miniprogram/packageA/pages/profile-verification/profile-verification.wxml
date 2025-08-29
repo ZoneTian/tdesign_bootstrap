@@ -5,7 +5,7 @@
 <view class="page-wrapper profile-verify">
   <view class="verify-group">
 
-    <view class="verify-card biometric">
+   <!-- <view class="verify-card biometric">
       <view class="card-image">
         <image class="" src="https://qiniustatic.womenshike.top/verify-biometric.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" binderror="" bindload="" />
       </view>
@@ -16,22 +16,22 @@
         </view>
         <view class="card-message">接口由腾讯与公安部第三所研发，本平台仅调用验证个人身份证</view>
       </view>
-    </view>
+    </view> -->
 
-    <view class="verify-card picture">
+    <view class="verify-card picture" bind:tap="onFaceVerificationTap">
       <view class="card-image">
         <image class="" src="https://qiniustatic.womenshike.top/verify-picture.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" binderror="" bindload="" />
       </view>
       <view class="card-content">
         <view class="card-head">
-          <view class="card-title">本人认证</view>
-          <view class="card-status danger">需更换个人主页照片</view>
+          <view class="card-title">人脸认证</view>
+         <!-- <view class="card-status danger">需更换个人主页照片</view> -->
         </view>
-        <view class="card-message">接口由腾讯云研发，本平台仅调用确保相册为用户本人</view>
+        <view class="card-message">本平台仅调用确保相册为用户本人</view>
       </view>
     </view>
 
-    <view class="verify-card student" bind:tap="goIdentityVerification">
+   <!-- <view class="verify-card student" bind:tap="goIdentityVerification">
       <view class="card-image">
         <image class="" src="https://qiniustatic.womenshike.top/verify-student.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" binderror="" bindload="" />
       </view>
@@ -42,7 +42,7 @@
         </view>
         <view class="card-message">接口由国家学信网提供服务，本平台仅调用做线验证报告</view>
       </view>
-    </view>
+    </view> -->
 
   </view>
 </view>

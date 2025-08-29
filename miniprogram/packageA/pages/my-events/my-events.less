@@ -8,14 +8,14 @@ page {
   background-size: 100% auto;
   background-color: #fff;
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
 .my-events {
   .px2rpx(margin-top, 5);
-  .padding-sides();
+  // .padding-sides();
   align-items: center;
 }
 
@@ -59,8 +59,11 @@ page {
 .my-events-group {
   display: flex;
   flex-direction: column;
-  .padding-sides();
+  // .padding-sides();
   .px2rpx(margin-top, 15);
   .px2rpx(margin-bottom, 15);
   .px2rpx(gap, 10);
+  width: 90%;
+  flex: 1;
+  overflow-y: auto;
 }

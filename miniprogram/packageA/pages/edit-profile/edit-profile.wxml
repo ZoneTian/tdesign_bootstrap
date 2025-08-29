@@ -1,5 +1,444 @@
-<navigation-bar back="{{true}}" color="black">
-  <view slot="center" class="slot-title">编辑资料</view>
-</navigation-bar>
+<navigation-bar back="{{true}}" color="black"></navigation-bar>
 
-<view class="page-wrapper edit-profile"></view>
+<view class="page-wrapper personal-info">
+  <view class="header-container">
+    <view class="title">照片墙</view>
+    <view class="preview-btn" bindtap="previewProfile">预览主页</view>
+  </view>
+
+  <view class="picture-page">
+
+      <view class="picture-wall">
+      <view class="picture-left">
+        <!-- 主照片 -->
+        <view class="picture-main">
+          <block wx:if="{{form.main && form.main.url}}">
+            <view class="uploaded-image-wrapper">
+              <image class="uploaded-image" src="{{form.main.url}}" mode="aspectFill" />
+              <view class="close-icon" bindtap="onRemoveImage" data-field="main" data-id="{{form.main.id}}">×</view>
+            </view>
+          </block>
+          <block wx:else>
+            <view class="picture-placeholder">
+              <upload-file 
+                class="upload-cover" 
+                bind:add="onPictureChange"
+                data-field="main"
+                data-position="0"
+                bind:uploadsuccess="onUploadSuccess">
+                <view slot="placeholder" class="placeholder-main">
+                  <image src="https://qiniustatic.womenshike.top/icon_pic_main.png" class="placeholder-pic" mode="aspectFill" lazy-load="false" />
+                  <text>相册封面</text>
+                </view>
+              </upload-file>
+            </view>
+          </block>
+        </view>
+        
+        <!-- 底部照片 -->
+        <view class="picture-bottom">
+          <!-- 认真凹造型 -->
+          <view class="picture-public">
+            <block wx:if="{{form.careful && form.careful.url}}">
+              <view class="uploaded-image-wrapper">
+                <image class="uploaded-image" src="{{form.careful.url}}" mode="aspectFill" />
+                <view class="close-icon" bindtap="onRemoveImage" data-field="careful" data-id="{{form.careful.id}}">×</view>
+              </view>
+            </block>
+            <block wx:else>
+              <view class="picture-placeholder">
+                <upload-file 
+                  class="upload-cover" 
+                  bind:add="onPictureChange"
+                  data-field="careful"
+                  data-position="1"
+                  bind:uploadsuccess="onUploadSuccess">
+                  <view slot="placeholder" class="placeholder-main">
+                    <image src="https://qiniustatic.womenshike.top/icon_pic_careful.png" mode="aspectFill" lazy-load="false" />
+                    <text>认真凹造型</text>
+                  </view>
+                </upload-file>
+              </view>
+            </block>
+          </view>
+          
+          <!-- 自信的才艺 -->
+          <view class="picture-public">
+            <block wx:if="{{form.confidence && form.confidence.url}}">
+                <view class="uploaded-image-wrapper">
+                  <image class="uploaded-image" src="{{form.confidence.url}}" mode="aspectFill" />
+                  <view class="close-icon" bindtap="onRemoveImage" data-field="confidence" data-id="{{form.confidence.id}}">×</view>
+                </view>
+              </block>
+                <block wx:else>
+            <view class="picture-placeholder">
+            
+            
+                <upload-file 
+                  class="upload-cover" 
+                  bind:change="onPictureChange"
+                  data-field="confidence"
+                  data-position="2"
+                  bind:uploadsuccess="onUploadSuccess">
+                  <view slot="placeholder" class="placeholder-main">
+                    <image src="https://qiniustatic.womenshike.top/icon_pic_confidence.png" mode="aspectFill" lazy-load="false" />
+                    <text>自信的才艺</text>
+                  </view>
+                </upload-file>
+             
+            </view>
+             </block>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 右侧照片 -->
+      <view class="picture-right">
+        <!-- 得意的旅行照 -->
+        <view class="picture-public">
+           <block wx:if="{{form.montain && form.montain.url}}">
+              <view class="uploaded-image-wrapper">
+                <image class="uploaded-image" src="{{form.montain.url}}" mode="aspectFill"  />
+                <view class="close-icon" bindtap="onRemoveImage" data-field="montain" data-id="{{form.montain.id}}">×</view>
+              </view>
+            </block>
+            <block wx:else>
+          <view class="picture-placeholder">
+         
+              <upload-file 
+                class="upload-cover" 
+                bind:change="onPictureChange"
+                data-field="montain"
+                data-position="3"
+                bind:uploadsuccess="onUploadSuccess">
+                <view slot="placeholder" class="placeholder-main">
+                  <image src="https://qiniustatic.womenshike.top/icon_pic_montain.png" mode="aspectFill" lazy-load="false" />
+                  <text>得意的旅行照</text>
+                </view>
+              </upload-file>
+          
+          </view>
+            </block>
+        </view>
+        
+        <!-- 生活中的样子 -->
+        <view class="picture-public">
+          <block wx:if="{{form.life && form.life.url}}">
+              <view class="uploaded-image-wrapper">
+                <image class="uploaded-image" src="{{form.life.url}}" mode="aspectFill" />
+                <view class="close-icon" bindtap="onRemoveImage" data-field="life" data-id="{{form.life.id}}">×</view>
+              </view>
+            </block>
+            <block wx:else>
+          <view class="picture-placeholder">
+          
+              <upload-file 
+                class="upload-cover" 
+                bind:change="onPictureChange"
+                data-field="life"
+                data-position="4"
+                bind:uploadsuccess="onUploadSuccess">
+                <view slot="placeholder" class="placeholder-main">
+                  <image src="https://qiniustatic.womenshike.top/icon_pic_life.png" mode="aspectFill" lazy-load="false" />
+                  <text>生活中的样子</text>
+                </view>
+              </upload-file>
+           
+          </view>
+           </block>
+        </view>
+        
+        <!-- 笑起来的样子 -->
+        <view class="picture-public">
+         <block wx:if="{{form.smile && form.smile.url}}">
+              <view class="uploaded-image-wrapper">
+                <image class="uploaded-image" src="{{form.smile.url}}" mode="aspectFill" />
+                <view class="close-icon" bindtap="onRemoveImage" data-field="smile" data-id="{{form.smile.id}}">×</view>
+              </view>
+            </block>
+            <block wx:else>
+          <view class="picture-placeholder">
+           
+              <upload-file 
+                class="upload-cover" 
+                bind:change="onPictureChange"
+                data-field="smile"
+                data-position="5"
+                bind:uploadsuccess="onUploadSuccess">
+                <view slot="placeholder" class="placeholder-main">
+                  <image src="https://qiniustatic.womenshike.top/icon_pic_smile.png" mode="aspectFill" lazy-load="false" />  
+                  <text>笑起来的样子</text>
+                </view>
+              </upload-file>
+          
+          </view>
+            </block>
+        </view>
+      </view>
+    </view>
+    <view class="photo-tips">
+      <text class="tips-text">相册首张照片会作为封面，请上传竖版半身或全身(面部无遮挡，将自动审核)。其余照片可上传生活照或风景照，至少两张照片。</text>
+    </view>
+   </view>
+  </view>
+  
+  <view class="empty-view"> </view>
+
+  <view class="register-form">
+
+    <!-- 昵称 -->
+    <view 
+      class="form-item"
+      data-field="nickName"
+    >
+      <view class="label-group">
+        <view class="label">昵称</view>
+        <view wx:if="{{ !form.nickName }}" class="placeholder">请输入昵称</view>
+      </view>
+      <view class="label-result-input" >
+        <input
+          type="text"
+          class="form-input"
+          value="{{form.nickName}}"
+          bindinput="onnickNameInput"
+        />
+      </view>
+    </view>
+
+         <!-- 手机号 -->
+    <view 
+      class="form-item"
+      data-field="telephone"
+      bind:tap="getUserProfile"
+    >
+      <view class="label-group">
+        <view class="label">手机号<text class="disabled"> *</text></view>
+        <view wx:if="{{ !form.telephone }}" class="placeholder">请输入手机号</view>
+      </view>
+      <view class="label-result-input" >
+        <input
+          type="text"
+          class="form-input"
+          value="{{form.telephone}}"
+          bindinput="onMobileInput"
+        />
+      </view>
+    </view>
+
+    <view
+      class="form-item"
+      bindtap="onHandlePicker"
+      data-field="gender"
+      disabled
+    >
+      <view class="label-group">
+        <text class="label">性别<text class="disabled"> *<text class="adding">无法修改</text></text></text>
+        <view wx:if="{{ !form.gender }}" class="placeholder">请选择性别</view>
+      </view>
+      <view class="label-result">
+        <input
+          type="text"
+          class="form-input"
+          value="{{form.gender && form.gender.label}}"
+          disabled
+        />
+      </view>
+    </view>
+
+     <view
+      class="form-item"
+      bindtap="showPicker"
+      data-field="birthday"
+      disabled
+    >
+      <view class="label-group">
+        <text class="label">出生日期</text>
+        <view wx:if="{{ !form.birthday }}" class="placeholder">请选择出生日期</view>
+      </view>
+      <view class="label-result">
+        <input
+          type="text"
+          class="form-input"
+          value="{{form.birthday && form.birthday.label}}"
+          disabled
+        />
+      </view>
+    </view>
+
+    <view 
+      class="form-item" 
+      bindtap="onHandlePicker" 
+      data-field="userHeight"
+    >
+      <view class="label-group">
+        <text class="label">身高</text>
+        <view wx:if="{{ !form.userHeight }}" class="placeholder">请选择身高</view>
+      </view>
+      <view class="label-result">
+        <input 
+          type="text" 
+          class="form-input" 
+          value="{{form.userHeight && form.userHeight.label}}"
+          disabled
+        />
+      </view>
+    </view>
+
+
+    <view 
+      class="form-item"
+      data-field="userMbti"
+      bindtap="onHandlePicker" 
+    >
+      <view class="label-group">
+        <text class="label">MBTI</text>
+        <view wx:if="{{ !form.userMbti }}" class="placeholder">请输入MBTI</view>
+      </view>
+      <view class="label-result-input">
+        <input 
+          type="text" 
+          class="form-input" 
+          value="{{form.userMbti && form.userMbti.label}}"
+          placeholder="请输入MBTI"
+          bindinput="onMbtiInput"
+        />
+      </view>
+    </view>
+
+    <view 
+      class="form-item" 
+      bindtap="showRegionPicker"
+      data-field="hometown"
+    >
+      <view class="label-group">
+        <text class="label">家乡</text>
+        <view wx:if="{{ !form.hometown }}" class="placeholder">请选择家乡</view>
+      </view>
+      <view class="label-result">
+        <input
+          type="text"
+          class="form-input"
+          value="{{form.hometown && form.hometown.label}}"
+          disabled
+        />
+      </view>
+    </view>
+
+    <view 
+      class="form-item" 
+      bindtap="showRegionPicker"
+      data-field="location"
+    >
+      <view class="label-group">
+        <text class="label">现居地</text>
+        <view wx:if="{{ !form.location }}" class="placeholder">请选择现居地</view>
+      </view>
+      <view class="label-result">
+        <input 
+          type="text" 
+          class="form-input" 
+          value="{{form.location && form.location.label}}"
+          disabled
+        />
+      </view>
+    </view>   
+    
+    <view 
+      class="form-item" 
+      bindtap="onHandlePicker" 
+      data-field="occupation"
+    >
+      <view class="label-group">
+        <text class="label">职业<text class="disabled"> *</text></text>
+        <view wx:if="{{ !form.occupation }}" class="placeholder">请选择职业</view>
+      </view>
+      <view class="label-result">
+        <input 
+          type="text" 
+          class="form-input" 
+          value="{{form.occupation && form.occupation.label}}"
+          disabled
+        />
+      </view>
+    </view>
+
+
+  </view>
+
+    <!-- 隐私信息区域 -->
+    <view class="empty-view"></view>
+    <view class="privacy-section">
+      <view class="privacy-title">隐私信息</view>
+      
+      <!-- 自我描述 -->
+      <view class="privacy-card" bindtap="onEditSelfDescription">
+        <view class="privacy-card-header">
+          <view class="privacy-card-title">自我描述</view>
+          <view class="edit-icon" >
+            <image src="https://qiniustatic.womenshike.top/icon_edit.png" mode="aspectFit"></image>
+          </view>
+        </view>
+        <view class="privacy-card-content">
+          <textarea 
+            class="privacy-textarea" 
+            value="{{form.selfDescription}}" 
+            placeholder="本人性格内向，但如果我们足够熟悉，也能敞开心扉，爱好羽毛球，乒乓球;未来希望生活在北京，或者是河北，兜兜转转，我们总会相遇;希望能找到合适的那个她呀"
+            bindinput="onSelfDescriptionInput"
+            maxlength="500"
+            auto-height
+            style="white-space: pre-wrap; word-break: break-all;"
+            disabled
+          ></textarea>
+        </view>
+      </view>
+      
+      <!-- 交友倾向 -->
+      <view class="privacy-card" bindtap="onEditDatingPreference">
+        <view class="privacy-card-header">
+          <view class="privacy-card-title">交友倾向</view>
+          <view class="edit-icon" >
+            <image src="https://qiniustatic.womenshike.top/icon_edit.png" mode="aspectFit"></image>
+          </view>
+        </view>
+        <view class="privacy-card-content">
+          <textarea 
+            class="privacy-textarea" 
+            value="{{form.friendshipTend}}" 
+            placeholder="希望TA：年龄22-24岁，身高165;学历是研究生;品行善良，性格略成熟;爱出去玩加分;不做宅女宅男，我们一起一起"
+            bindinput="onDatingPreferenceInput"
+            maxlength="500"
+            auto-height
+            style="white-space: pre-wrap; word-break: break-all;"
+            disabled
+          ></textarea>
+        </view>
+      </view>
+    </view>
+
+    <!-- 保存按钮移到表单内部 -->
+    <view class="form-submit" bindtap="onSaveProfile">保存</view>
+
+<date-picker
+  id="birthdayPicker"
+  value="{{form.birthdate}}"
+  bind:confirm="onBirthdayConfirm"
+  showWeek="{{false}}"
+  format="YYYY-MM-DD"
+/>
+
+<region-picker
+  title="选择地区"
+  id="areaPicker"
+  bind:hometownChange="onHometownChange"
+  bind:locationChange="onLocationChange"
+/>
+
+<picker-overlay
+  visible="{{picker.visible}}"
+  title="{{picker.title}}"
+  field-key="{{picker.field}}"
+  options="{{picker.options}}"
+  current-value="{{form[picker.field]}}"
+  bind:confirm="onPickerConfirm"
+  bind:cancel="onPickerCancel"
+/>

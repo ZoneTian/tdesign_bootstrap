@@ -1,4 +1,4 @@
-import { uploadFileWithProgress } from '../../utils/file';
+import { uploadFileWithProgress, compressImage } from '../../utils/file';
 
 type FileItem = WechatMiniprogram.UploadFileOption & {
   status?: 'loading' | 'done' | 'error';
@@ -15,16 +15,28 @@ Component({
   options: {
     multipleSlots: true, // 在组件定义时的选项中启用多slot支持
   },
-  // data: {
-  //   fileList: [] as FileItem[],
-  // },
+  data: {
+    isUploading: false,
+  },
   methods: {
     async handleAdd(e: WechatMiniprogram.CustomEvent<{ files: FileItem[] }>) {
       const { files } = e.detail;
 
-      files.forEach(async (file: FileItem) => {
-        await this.uploadFile(file);
+      // 显示微信原生loading提示
+      wx.showLoading({
+        title: '上传中...',
+        mask: true // 添加蒙层防止用户触摸操作
       });
+      
+      try {
+        for (const file of files) {
+          await this.uploadFile(file);
+        }
+      } catch (error) {
+        console.error('上传失败:', error);
+        // 上传失败时隐藏loading
+        wx.hideLoading();
+      }
     },
 
     async uploadFile(file: FileItem) {
@@ -42,8 +54,11 @@ Component({
       this.triggerEvent('filechange', fileListCopy);
 
       try {
+        // 先压缩图片，质量设置为3
+        const compressedFilePath = await compressImage(file.url, 3);
+        
         const url = await uploadFileWithProgress({
-          filePath: file.url,
+          filePath: compressedFilePath,
           onProgress: (percent) => {
             // this.setData({
             //   [`fileList[${index}].percent`]: percent,
@@ -66,25 +81,16 @@ Component({
           file: fileListCopy[index],
         });
 
-        // this.setData({
-        //   [`fileList[${index}].status`]: 'done',
-        //   [`fileList[${index}].url`]: url, // 上传成功返回的地址
-        // });
-
-        // this.triggerEvent('uploadsuccess', {
-        //   index,
-        //   url,
-        //   file: this.data.fileList[index],
-        // });
+        // 上传完成，隐藏loading
+        wx.hideLoading();
       } catch (err) {
         fileListCopy[index].status = 'error';
         this.triggerEvent('uploadfail', {
           index,
           error: err,
         });
-        // this.setData({
-        //   [`fileList[${index}].status`]: 'error',
-        // });
+        // 上传失败，隐藏loading
+        wx.hideLoading();
         console.error('上传失败：', err);
       }
     },

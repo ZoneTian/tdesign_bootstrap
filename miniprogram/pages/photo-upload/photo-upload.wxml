@@ -5,8 +5,8 @@
     <view class="processing reading"></view>
     <view class="processing reading"></view>
   </view>
+  
   <view class="register-form">
-
     <view class="title-container">
       <view class="title-head">更多照片</view>
       <view class="title-remark">展示你的多样魅力，更容易被喜欢</view>
@@ -14,176 +14,203 @@
     
     <view class="picture-wall">
       <view class="picture-left">
+        <!-- 主照片 -->
         <view class="picture-main">
-
-          <view class="picture-placeholder">
-            <upload-file 
-              class="upload-cover" 
-              bind:change="onPictureChange"
-              data-field="main"
-              data-position="0"
-              bind:uploadsuccess="onUploadSuccess"
-            >
-              <view slot="placeholder" class="placeholder-main">
-                <image src="https://qiniustatic.womenshike.top/icon_pic_main.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" />
-                <text>相册封面</text>
-              </view>
-            </upload-file>
-          </view>
-            
+          <block wx:if="{{form.main && form.main.url}}">
+            <view class="uploaded-image-wrapper">
+              <image class="uploaded-image" src="{{form.main.url}}" mode="aspectFill" />
+              <view class="close-icon" bindtap="onRemoveImage" data-field="main">×</view>
+            </view>
+          </block>
+          <block wx:else>
+            <view class="picture-placeholder">
+              <upload-file 
+                class="upload-cover" 
+                bind:change="onPictureChange"
+                data-field="main"
+                data-position="0"
+                bind:uploadsuccess="onUploadSuccess">
+                <view slot="placeholder" class="placeholder-main">
+                  <image src="https://qiniustatic.womenshike.top/icon_pic_main.png" class="placeholder-pic" mode="aspectFill" lazy-load="false" />
+                  <text>相册封面</text>
+                </view>
+              </upload-file>
+            </view>
+          </block>
         </view>
+        
+        <!-- 底部照片 -->
         <view class="picture-bottom">
+          <!-- 认真凹造型 -->
           <view class="picture-public">
-
-          <view class="picture-placeholder">
-            <upload-file 
-              class="upload-cover" 
-              bind:change="onPictureChange"
-              data-field="careful"
-              data-position="1"
-              bind:uploadsuccess="onUploadSuccess"
-            >
-              <view slot="placeholder" class="placeholder-main">
-                <image src="https://qiniustatic.womenshike.top/icon_pic_careful.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" />
-                <text>认真凹造型</text>
-              </view>
-            </upload-file>
-          </view>
-
-
-
-          </view>
-          <view class="picture-public">
-
-          <view class="picture-placeholder">
-            <upload-file 
-              class="upload-cover" 
-              bind:change="onPictureChange"
-              data-field="confidence"
-              data-position="2"
-              bind:uploadsuccess="onUploadSuccess"
-            >
-              <view slot="placeholder" class="placeholder-main">
-                <image src="https://qiniustatic.womenshike.top/icon_pic_confidence.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" />
-                <text>自信的才艺</text>
-              </view>
-            </upload-file>
-          </view>
-
-
-
-          </view>
-        </view>
-      </view>
-      <view class="picture-right">
-        <view class="picture-public">
-
-          <view class="picture-placeholder">
-            <upload-file 
-              class="upload-cover" 
-              bind:change="onPictureChange"
-              data-field="montain"
-              data-position="3"
-              bind:uploadsuccess="onUploadSuccess"
-            >
-              <view slot="placeholder" class="placeholder-main">
-                <image src="https://qiniustatic.womenshike.top/icon_pic_montain.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" />
-                <text>得意的旅行照</text>
-              </view>
-            </upload-file>
-          </view>
-
-
-
-        </view>
-        <view class="picture-public">
-
-          <view class="picture-placeholder">
-            <upload-file 
-              class="upload-cover" 
-              bind:change="onPictureChange"
-              data-field="life"
-              data-position="4"
-              bind:uploadsuccess="onUploadSuccess"
-            >
-              <view slot="placeholder" class="placeholder-main">
-                <image src="https://qiniustatic.womenshike.top/icon_pic_life.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" />
-                <text>生活中的样子</text>
-              </view>
-            </upload-file>
-          </view>
-
-
-
-        </view>
-        <view class="picture-public">
-
-          <view class="picture-placeholder">
-
-            <block wx:if="{{form.smile && form.smile.url}}">
+            <block wx:if="{{form.careful && form.careful.url}}">
               <view class="uploaded-image-wrapper">
-                <image class="uploaded-image" src="{{form.smile.url}}" mode="aspectFill" />
-                <view class="close-icon" bindtap="onRemoveSmile">×</view>
+                <image class="uploaded-image" src="{{form.careful.url}}" mode="aspectFill" />
+                <view class="close-icon" bindtap="onRemoveImage" data-field="careful">×</view>
               </view>
             </block>
             <block wx:else>
-
+              <view class="picture-placeholder">
+                <upload-file 
+                  class="upload-cover" 
+                  bind:change="onPictureChange"
+                  data-field="careful"
+                  data-position="1"
+                  bind:uploadsuccess="onUploadSuccess">
+                  <view slot="placeholder" class="placeholder-main">
+                    <image src="https://qiniustatic.womenshike.top/icon_pic_careful.png" mode="aspectFill" lazy-load="false" />
+                    <text>认真凹造型</text>
+                  </view>
+                </upload-file>
+              </view>
+            </block>
+          </view>
+          
+          <!-- 自信的才艺 -->
+          <view class="picture-public">
+            <block wx:if="{{form.confidence && form.confidence.url}}">
+                <view class="uploaded-image-wrapper">
+                  <image class="uploaded-image" src="{{form.confidence.url}}" mode="aspectFill" />
+                  <view class="close-icon" bindtap="onRemoveImage" data-field="confidence">×</view>
+                </view>
+              </block>
+                <block wx:else>
+            <view class="picture-placeholder">
+            
+            
+                <upload-file 
+                  class="upload-cover" 
+                  bind:change="onPictureChange"
+                  data-field="confidence"
+                  data-position="2"
+                  bind:uploadsuccess="onUploadSuccess">
+                  <view slot="placeholder" class="placeholder-main">
+                    <image src="https://qiniustatic.womenshike.top/icon_pic_confidence.png" mode="aspectFill" lazy-load="false" />
+                    <text>自信的才艺</text>
+                  </view>
+                </upload-file>
+             
+            </view>
+             </block>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 右侧照片 -->
+      <view class="picture-right">
+        <!-- 得意的旅行照 -->
+        <view class="picture-public">
+           <block wx:if="{{form.montain && form.montain.url}}">
+              <view class="uploaded-image-wrapper">
+                <image class="uploaded-image" src="{{form.montain.url}}" mode="aspectFill" />
+                <view class="close-icon" bindtap="onRemoveImage" data-field="montain">×</view>
+              </view>
+            </block>
+            <block wx:else>
+          <view class="picture-placeholder">
+         
+              <upload-file 
+                class="upload-cover" 
+                bind:change="onPictureChange"
+                data-field="montain"
+                data-position="3"
+                bind:uploadsuccess="onUploadSuccess">
+                <view slot="placeholder" class="placeholder-main">
+                  <image src="https://qiniustatic.womenshike.top/icon_pic_montain.png" mode="aspectFill" lazy-load="false" />
+                  <text>得意的旅行照</text>
+                </view>
+              </upload-file>
+          
+          </view>
+            </block>
+        </view>
+        
+        <!-- 生活中的样子 -->
+        <view class="picture-public">
+          <block wx:if="{{form.life && form.life.url}}">
+              <view class="uploaded-image-wrapper">
+                <image class="uploaded-image" src="{{form.life.url}}" mode="aspectFill" />
+                <view class="close-icon" bindtap="onRemoveImage" data-field="life">×</view>
+              </view>
+            </block>
+            <block wx:else>
+          <view class="picture-placeholder">
+          
+              <upload-file 
+                class="upload-cover" 
+                bind:change="onPictureChange"
+                data-field="life"
+                data-position="4"
+                bind:uploadsuccess="onUploadSuccess">
+                <view slot="placeholder" class="placeholder-main">
+                  <image src="https://qiniustatic.womenshike.top/icon_pic_life.png" mode="aspectFill" lazy-load="false" />
+                  <text>生活中的样子</text>
+                </view>
+              </upload-file>
+           
+          </view>
+           </block>
+        </view>
+        
+        <!-- 笑起来的样子 -->
+        <view class="picture-public">
+         <block wx:if="{{form.smile && form.smile.url}}">
+              <view class="uploaded-image-wrapper">
+                <image class="uploaded-image" src="{{form.smile.url}}" mode="aspectFill" />
+                <view class="close-icon" bindtap="onRemoveImage" data-field="smile">×</view>
+              </view>
+            </block>
+            <block wx:else>
+          <view class="picture-placeholder">
+           
               <upload-file 
                 class="upload-cover" 
                 bind:change="onPictureChange"
                 data-field="smile"
                 data-position="5"
-                bind:uploadsuccess="onUploadSuccess"
-              >
+                bind:uploadsuccess="onUploadSuccess">
                 <view slot="placeholder" class="placeholder-main">
-                  <image src="https://qiniustatic.womenshike.top/icon_pic_smile.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" />  
+                  <image src="https://qiniustatic.womenshike.top/icon_pic_smile.png" mode="aspectFill" lazy-load="false" />  
                   <text>笑起来的样子</text>
                 </view>
               </upload-file>
-
-            </block>
-
-          </view>
           
+          </view>
+            </block>
         </view>
       </view>
     </view>
-
   </view>
 
+  <!-- 审核规则说明 -->
   <view class="form-reject">
-
     <view class="title-container">
       以下照片不能通过审核
     </view>
-
     <view class="reject-items">
       <view class="item">
-        <image src="https://qiniustatic.womenshike.top/reject_1.jpg" mode="aspectFit|aspectFill|widthFix" lazy-load="false" />
+        <image src="https://qiniustatic.womenshike.top/reject_1.jpg" mode="aspectFill" lazy-load="false" />
         <text>他人照片</text>
         <view class="error"></view>
       </view>
       <view class="item">
-        <image src="https://qiniustatic.womenshike.top/reject_2.jpg" mode="aspectFit|aspectFill|widthFix" lazy-load="false" />
+        <image src="https://qiniustatic.womenshike.top/reject_2.jpg" mode="aspectFill" lazy-load="false" />
         <view class="error"></view>
         <text>看不清脸</text>
       </view>
       <view class="item">
-        <image src="https://qiniustatic.womenshike.top/reject_3.jpg" mode="aspectFit|aspectFill|widthFix" lazy-load="false" />
+        <image src="https://qiniustatic.womenshike.top/reject_3.jpg" mode="aspectFill" lazy-load="false" />
         <view class="error"></view>
         <text>P图过度</text>
       </view>
       <view class="item">
-        <image src="https://qiniustatic.womenshike.top/reject_4.jpg" mode="aspectFit|aspectFill|widthFix" lazy-load="false" />
+        <image src="https://qiniustatic.womenshike.top/reject_4.jpg" mode="aspectFill" lazy-load="false" />
         <view class="error"></view>
         <text>非人物照</text>
       </view>
     </view>
-      
   </view>
 
+  <!-- 提交按钮 -->
   <view class="form-submit" bindtap="goHome">下一步</view>
 </view>
-
-
-

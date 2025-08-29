@@ -4,9 +4,10 @@
 
 <view class="page-wrapper settings">
   <view class="settings-container function multi">
-    <view class="settings-container-item between" bindtap="onsettingsVerification">
+    <view class="settings-container-item between">
       <view class="content">手机号绑定</view>
-      <view class="phonenumber_right">135****0505</view>
+      <view wx:if="{{phoneNumber}}" class="phonenumber_right">{{phoneNumber}}</view>
+      <button wx:else class="phonenumber_right phone-button" open-type="getPhoneNumber" bindgetphonenumber="onsettingsVerification">获取手机号</button>
     </view>
     <view class="settings-container-item" bind:tap="onUserAgreementTap">
       <view class="content">用户协议</view>
@@ -20,7 +21,7 @@
       <view class="content">关于我们</view>
       <image class="arrow_right" src="https://qiniustatic.womenshike.top/icon_arrow_r_card.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" />
     </view>
-    <view class="settings-container-item" bindtap="">
+    <view class="settings-container-item" bindtap="onUnregisterTap">
       <view class="content highlight">注销账号</view>
       <view class="care">
         慎重选择

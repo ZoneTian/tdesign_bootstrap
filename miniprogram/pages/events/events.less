@@ -37,7 +37,6 @@ page {
   width: 100%;
   height: 100vh;
   display: flex;
-  flex-direction: column;
 }
 
 .events {
@@ -45,13 +44,52 @@ page {
   .px2rpx(padding-top, 5);
   .px2rpx(padding-bottom, @safe-bottom-with-footer);
   position: relative;
+  align-items: center;
 
   .events-group {
     display: flex;
+    width: 90%;
     flex-direction: column;
     .padding-sides();
-    .px2rpx(margin-top, 15);
-    .px2rpx(margin-bottom, 15);
+
+    .px2rpx(margin, 15);
     .px2rpx(gap, 10);
+  }
+}
+.events-tabs-wrapper {
+  position: relative;
+  .size(195, 34);
+
+}
+
+.events-tabs {
+  .size(187, 26);
+  .px2rpx(border-radius, 19);
+  background-color: rgba(212, 219, 237, 0.8);
+  mix-blend-mode: luminosity;
+  .padding(4, 4, 4, 4);
+}
+
+.events-btn {
+  position: absolute;
+  .px2rpx(top, 4);
+
+  .size(93, 26);
+  .px2rpx(line-height, 26);
+  .px2rpx(border-radius, 15);
+
+  z-index: 1;
+  .font-group(14, 500);
+  color: #fff;
+  text-align: center;
+
+  &.fl {
+    .px2rpx(left, 4);
+  }
+  &.fr {
+    .px2rpx(right, 4);
+  }
+  &.action {
+    background: linear-gradient(275deg, #a9c5ff 1.61%, #c6d9ff 97.56%);
   }
 }

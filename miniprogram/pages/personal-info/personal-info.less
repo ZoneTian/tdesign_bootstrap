@@ -77,6 +77,18 @@ page {
     }
   }
 
+  .label-result-input {
+    display: flex;
+    margin-left: auto;
+    .px2rpx(height, 34);
+
+    background-image: url('https://qiniustatic.womenshike.top/icon_arrow_r_personal_info.png');
+    background-repeat: no-repeat;
+    background-position-x: right;
+    background-position-y: center;
+    background-size: 15.3648rpx 26.9231rpx;
+  }
+
   .label-result {
     display: flex;
     margin-left: auto;
@@ -88,6 +100,7 @@ page {
     background-position-y: center;
     background-size: 15.3648rpx 26.9231rpx;
   }
+
 
   &.last-form-item {
     .px2rpx(border-width,0);
@@ -123,16 +136,12 @@ page {
 }
 
 .form-submit {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
   .specially-button-style();
 
   .px2rpx(border-radius, 12);
 
   .font-group(18,600);
-
+  margin-top: 30px;
   color: #fff;
 
   .margin-sides();

@@ -28,13 +28,13 @@ function initEnv(overrideEnv?: EnvVersion): EnvConfig {
   let apiHost = '';
   switch (finalEnv) {
     case 'develop':
-      apiHost = 'http://118.25.194.239:48080';
+      apiHost = 'https://www.womenshike.top/mp-api';
       break;
     case 'trial':
-      apiHost = 'https://www.womenshike.top';
+      apiHost = 'https://www.womenshike.top/mp-api';
       break;
     case 'release':
-      apiHost = 'https://www.womenshike.top';
+      apiHost = 'https://www.womenshike.top/mp-api';
       break;
   }
 

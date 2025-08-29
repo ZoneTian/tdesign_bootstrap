@@ -1,5 +1,6 @@
 @import 'styles/_variables.less';
 @import 'styles/_mixins.less';
+@import 'styles/_components.less';
 
 page {
   background-image: url(https://qiniustatic.womenshike.top/background_top.png);
@@ -31,7 +32,7 @@ page {
   justify-content: center;
   align-items: center;
   > image {
-    width: 100%;
+
     height: 100%;
   }
 }
@@ -251,4 +252,12 @@ page .wx-swiper-dots {
     color: #6b6b6b;
     .font-group(14, 400);
   }
+}
+
+.activity-popup__buttom-slot {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

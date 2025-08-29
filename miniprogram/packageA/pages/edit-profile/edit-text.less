@@ -1,0 +1,152 @@
+@import '../../../styles/_variables.less';
+@import '../../../styles/_mixins.less';
+
+page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  background-image: url('https://qiniustatic.womenshike.top/background_top.png');
+  background-repeat: no-repeat;
+  background-position: top center;
+  background-size: 100% auto;
+  background-color: #fff;
+
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.container-edit-text {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 32rpx;
+  height: 88rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+  position: relative;
+}
+
+.back-icon {
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.back-icon image {
+  width: 32rpx;
+  height: 32rpx;
+}
+
+.title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 36rpx;
+  font-weight: 500;
+  color: #333;
+}
+
+.save-btn {
+   margin-top: 30px;
+  .specially-button-style();
+
+  .px2rpx(border-radius, 12);
+
+  .font-group(18,600);
+
+  color: #fff;
+
+  .margin-sides();
+
+  text-align: center;
+
+  .px2rpx(height,58);
+  .px2rpx(line-height,58);
+
+  .px2rpx(margin-bottom, @safe-bottom);
+}
+
+.content {
+  flex: 1;
+  padding: 32rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.tips {
+  margin-bottom: 24rpx;
+  padding: 16rpx;
+  border-radius: 8rpx;
+  display: flex;
+  flex-direction: column;
+  font-family: PingFang SC;
+font-weight: 400;
+font-style: Regular;
+font-size: 12px;
+line-height: 100%;
+letter-spacing: 0%;
+vertical-align: middle;
+
+}
+
+.tips text {
+  font-size: 26rpx;
+  line-height: 40rpx;
+  color: #666;
+}
+
+.textarea-container {
+  flex: 1;
+  position: relative;
+  background-color: #f9f9f9;
+  border-radius: 8rpx;
+  padding: 16rpx;
+
+
+}
+
+.input-area {
+  width: 100%;
+  min-height: 300rpx;
+  font-size: 30rpx;
+  line-height: 48rpx;
+  color: #333;
+  padding: 0;
+  border: none;
+  white-space: pre-wrap;
+  word-break: break-all;
+  border: 2px solid #CCCCD4;
+    border-radius: 12rpx;
+}
+.input-container {
+  flex: 1;
+  position: relative;
+  // background-color: #fff;
+  border-radius: 16rpx;
+  margin-bottom: 32rpx;
+  display: flex;
+  flex-direction: column;
+}
+// .textarea-wrapper {
+//   flex: 1;
+//   width: 100%;
+//   margin-bottom: 40rpx; /* 为字数统计留出空间 */
+// }
+
+.word-count {
+  position: absolute;
+  bottom: 16rpx;
+  right: 16rpx;
+  font-size: 24rpx;
+  color: #999;
+}

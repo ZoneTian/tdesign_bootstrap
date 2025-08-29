@@ -5,13 +5,13 @@
 <view class="page-wrapper attendee-list">
   <view class="attendee-list__group">
     <block wx:for="{{attendeeList.items}}" wx:key="id">
-      <view class="attendee-list__card" bindtap="toPublicProfile">
-        <image class="attendee-list__avatar" src="{{item.path}}" mode="aspectFill" />
+      <view class="attendee-list__card" bindtap="toPublicProfile" data-index="{{index}}">
+        <image class="attendee-list__avatar" src="{{item.userCoverImg || defaultAvatar}}" mode="aspectFill" />
         <view class="attendee-list__info">
-          <view class="attendee-list__name">{{item.info.nickname}}</view>
-          <view class="attendee-list__school">{{item.info.school}}</view>
+          <view class="attendee-list__name" wx-if="{{item.nickName}}">{{item.nickName}}</view>
+          <view class="attendee-list__school" wx-if="{{item.school}}">{{item.school}}</view>
         </view>
-        <view class="attendee-list__like-icon">
+        <view class="attendee-list__like-icon" wx:if="{{item.userId !== currentUserId && item.isFollowed !== 1}}" bindtap="onFollowUser" data-index="{{index}}" data-user-id="{{item.userId}}">
           <image class="attendee-list__like-image" src="https://qiniustatic.womenshike.top/icon_home_pink.png" mode="widthFix" />
         </view>
       </view>

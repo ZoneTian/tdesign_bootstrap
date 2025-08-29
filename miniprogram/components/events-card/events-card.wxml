@@ -2,17 +2,16 @@
   <view class="header">
     <view class="title">{{ title }}</view>
     <view class="sub-title">
-      <view wx:if="{{ statusTagText }}" class="sub-title-status">{{ statusTagText }}</view>
+      <view wx:if="{{ statusTagText }}" class="sub-title-status {{ statusClass }}">{{ statusTagText }}</view>
       {{ subtitle }}
     </view>
   </view>
 
   <view class="body">
     <image
-      wx:for="{{ images }}"
-      wx:key="index"
-      src="{{ item }}"
-      mode="aspectFit|aspectFill|widthFix"
+      src="{{ images || '' }}"
+      mode="aspectFill"
+      class="event-image"
     />
   </view>
 
@@ -25,7 +24,7 @@
       </view>
       {{ condition }}
       </view>
-    <view wx:if="{{ status }}" class="status {{ status }}">
+    <view wx:if="{{ statusText }}" class="status {{ status || 'registered' }}">
       {{ statusText }}
     </view>
   </view>

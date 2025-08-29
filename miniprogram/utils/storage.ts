@@ -1,4 +1,4 @@
-import { AREA_LIST_STORAGE_KEY, SCHOOL_LIST_STROAGE_KEY } from './constants';
+import { AREA_LIST_STORAGE_KEY, SCHOOL_LIST_STROAGE_KEY, POPUP_SHOWN_KEY } from './constants';
 
 /**
  * 将 areaList 保存到小程序本地缓存
@@ -49,5 +49,33 @@ export function getSchoolList(): string | null {
   } catch (e) {
     console.error('从小程序本地缓存读取 school list 失败：', e);
     return null;
+  }
+}
+
+/**
+ * 设置弹窗显示状态
+ * @param shown 是否已显示
+ */
+export function setPopupShown(shown: boolean): void {
+  try {
+    wx.setStorageSync(POPUP_SHOWN_KEY, shown);
+   console.log('zone ');
+   
+  } catch (e) {
+    console.error('保存弹窗显示状态失败：', e);
+  }
+}
+
+/**
+ * 获取弹窗显示状态
+ * @returns boolean 是否已显示
+ */
+export function getPopupShown(): boolean {
+  try {
+    const shown = wx.getStorageSync(POPUP_SHOWN_KEY);
+    return !!shown;
+  } catch (e) {
+    console.error('读取弹窗显示状态失败：', e);
+    return false;
   }
 }

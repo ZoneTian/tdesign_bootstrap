@@ -1,0 +1,45 @@
+<navigation-bar back="{{true}}" color="black">
+  <view slot="center" class="slot-title">{{type === 'selfDescription' ? '自我描述' : '交友倾向'}}</view>
+</navigation-bar>
+<view class="page-container">
+
+  
+  <view class="content">
+    <view class="tips" wx:if="{{type === 'friendshipTend'}}">
+      <text>写出你的交友倾向：</text>
+      <text>偏好什么年龄段、身高、学历；</text>
+      <text>偏好什么性格、个人品质；</text>
+      <text>加分项、不能接受的点有哪些；</text>
+      <text>亦或者是找个大学，例如运动、拍照、学习等；</text>
+    </view>
+    
+    <view class="tips" wx:if="{{type === 'selfDescription'}}">
+      <text>写出你的自我描述：</text>
+      <text>性格特点、兴趣爱好</text>
+      <text>生活方式、未来规划</text>
+      <text>期望和愿景</text>
+    </view>
+    
+    <view class="input-container">
+      <view class="textarea-wrapper">
+        <textarea 
+          class="input-area" 
+          value="{{content}}" 
+          bindinput="onContentInput"
+          placeholder="{{placeholder}}"
+          maxlength="800"
+          auto-height
+          show-confirm-bar="{{false}}"
+          adjust-position="{{true}}"
+          cursor-spacing="{{100}}"
+          style="white-space: pre-wrap; word-break: break-all;"
+        ></textarea>
+      </view>
+      <view class="word-count">{{contentLength}}/800</view>
+    </view>
+  </view>
+  
+  <view class="bottom-btn">
+    <view class="save-btn" bindtap="onSave">保存</view>
+  </view>
+</view>

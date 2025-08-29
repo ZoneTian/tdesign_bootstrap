@@ -12,7 +12,5 @@
   >
     <t-picker-item options="{{provinces}}"></t-picker-item>
     <t-picker-item options="{{cities}}"></t-picker-item>
-    <!-- 目前开放状态为省市，如果需要区则取消以下注释 -->
-    <!-- <t-picker-item options="{{counties}}"></t-picker-item> -->
   </t-picker>
 </view>

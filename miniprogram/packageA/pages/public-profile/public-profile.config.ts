@@ -21,7 +21,7 @@ export const sliderImages = [
   },
 ];
 
-export const selfDesc =
-  "希望TA：\n年龄22-24岁，身高165，\n学历是研究生\n品行善良，性格略成熟\n爱出去玩加分\n不做宅女宅男，我们一起一起";
-export const friendPref =
+export const selfDescription =
+  "年龄22-24岁，身高165，\n学历是研究生\n品行善良，性格略成熟\n爱出去玩加分\n不做宅女宅男";
+export const friendshipTend =
   "希望TA：\n年龄22-24岁，身高165，\n学历是研究生\n品行善良，性格略成熟\n爱出去玩加分\n不做宅女宅男，我们一起一起";

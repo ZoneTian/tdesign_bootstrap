@@ -24,41 +24,48 @@
       .px2rpx(height, 24);
       color: #949494;
       .font-group(12, 400);
-      .px2rpx(line-height, 24);
       .px2rpx(gap, 8);
       align-items: center;
       .sub-title-status {
-        .events-signing();
-        .px2rpx(width, 46);
         .px2rpx(height, 20);
+        padding: 0px 5px;
         color: #fff;
         .font-group(12, 400);
         text-align: center;
         .px2rpx(line-height, 20);
+        .px2rpx(border-radius, 4);
+        
+        // 报名中 - 绿色
+        &.signing {
+          background-color: #5cc696;
+        }
+        
+        // 敬请期待 - 黄色
+        &.upcoming {
+          background-color: #FFAB00;
+        }
+        
+        // 报名已结束 - 灰色
+        &.ended {
+          background-color: #8A8A8A;
+        }
       }
     }
   }
   .body {
     display: flex;
     flex-direction: row;
-    .px2rpx(gap, 2);
     .px2rpx(margin-top, 6);
-    .px2rpx(height, 94);
-
-    border-radius: 20rpx;
-    > image {
-      .px2rpx(width, 106);
-      .px2rpx(height, 94);
-
-      &:first-child {
-        .px2rpx(border-top-left-radius, 12);
-        .px2rpx(border-bottom-left-radius, 12);
-      }
-
-      &:last-child {
-        .px2rpx(border-top-right-radius, 12);
-        .px2rpx(border-bottom-right-radius, 12);
-      }
+    .px2rpx(height, 120);
+    width: 100%;
+    overflow: hidden;
+    border-radius: 12rpx;
+    
+    .event-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 12rpx;
     }
   }
 
@@ -130,15 +137,17 @@
 
         .px2rpx(margin-top, 7);
       }
-      &.interesting {
+      &.sign {
         color: #fff;
         .font-group(16, 500);
         .px2rpx(width, 84);
         .px2rpx(height, 36);
-        border-radius: 8px;
-        .specially-button-style();
+        border-radius: 5px; /* 更圆润的边角 */
+        background: linear-gradient(90deg, #A6C3FF 0%, #FFAAC6 100%); /* 从左侧蓝色到右侧粉色的渐变 */
         align-items: center;
         justify-content: center;
+        display: flex; /* 确保文字居中 */
+        box-shadow: 0 2px 8px rgba(166, 195, 255, 0.3); /* 添加轻微阴影效果 */
       }
     }
   }

@@ -14,8 +14,7 @@
     <view class="slot-title-line"></view>
   </view>
 </navigation-bar>
-
-<view class="page-wrapper home">
+<view class="page-wrapper home" style="--footer-height: {{footerHeight}}">
   <swiper class="swiper" indicator-dots="{{home.options.indicatorDots}}"
         autoplay="{{home.options.autoplay}}" 
         interval="{{home.options.interval}}" 
@@ -23,27 +22,26 @@
         vertical="{{home.options.vertical}}"
         easing-function="{{home.options.easingFunction}}"
         bindanimationfinish="bindanimationfinish">
-     <block wx:for="{{home.items}}" wx:for-index="index" wx:for-item="item" wx:key="index">
+     <block wx:for="{{referrerList}}" wx:for-index="index" wx:for-item="item" wx:key="index">
         <swiper-item>
-          <view class="swiper-item swiper-item-{{item.info.id}}">
-            <image src="{{item.path}}" mode="aspectFit|aspectFill|widthFix" lazy-load="false" />
+          <view class="swiper-item swiper-item-{{item.userId}}" bindtap="onUserProfile" data-userid="{{item.userId}}">
+            <image src="{{item.coverUrl}}" mode="widthFix" lazy-load="false" />
             <view class="swiper-info" hover-class="none" hover-stop-propagation="false">
-              
-              <view class="nickname">甜七七</view>
-              <view class="activity">
+              <view class="nickname">{{item.nickName}}</view>
+               <view class="activity" style="{{item.applyActivityDto?'':'display:none'}}" bind:tap="onEventInfo"  data-activityid="{{item.applyActivityDto.activityId}}">
                 <image src="https://qiniustatic.womenshike.top/icon_horm_home.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" />
-                <view class="act-user">她报名了</view>
-                <view class="act-info" bind:tap="onEventInfo">#南山飞盘暴汗局</view>
-                <view class="act-status">活动还可<view class="highlight">报名</view>哦~</view>
-              </view>
+                <view class="act-user">TA报名了</view>
+                <view class="act-info" >{{item.applyActivityDto.activityTitle}}</view>
+                <view class="act-status">活动还可<view class="highlight">报名</view>哦~</view> 
+              </view> 
             </view>
           </view>
         </swiper-item>
      </block>
     </swiper>
     <view class="home_active">
-      <view class="home_pink" bind:tap="onPink"></view>
-      <view class="home_reject"></view>
+      <view class="home_pink" bind:tap="onPink" wx:if="{{referrerList[currentSwiperIndex].isFollowed !== 1 }}"></view>
+      <view class="home_reject" bind:tap="onReject" data-userid="{{referrerList[currentSwiperIndex].userId}}"></view>
     </view>
 </view>
 
@@ -63,16 +61,22 @@
   bind:confirm="onConfirm"
   bind:close="onClose"
   icon="{{popup.icon}}"
-  buttonText="{{popup.buttonText}}"
+  button-text="{{popup.btnText}}"
 >
   <view slot="title" class="activity-popup__title-slot">
-    您还没有身份认证
+    {{popup.title}}
   </view>
+
+
     <!-- 您已经获得 <text class="activity-popup__highlight">1</text> 次免费参加活动的机会 -->
   <view slot="subtitle" class="activity-popup__subtitle-slot">
-    不能关注对方，不能报名活动
+    {{popup.subtitle}}
   </view>
-  <view slot="buttom" class="activity-popup__buttom-slot" bind:tap="goWelcome">
-    立即注册
-  </view>
+  <button slot="buttom" class="activity-popup__buttom-button"  bindtap="onSubscribe" >
+      {{popup.btnText}}
+  </button>
 </activity-popup>
+
+<!-- 底部占位元素，与footer-bar高度相同 -->
+<view class="footer-placeholder" style="height: {{footerHeight}}; box-sizing: border-box;"></view>
+

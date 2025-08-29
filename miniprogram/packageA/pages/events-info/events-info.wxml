@@ -2,17 +2,10 @@
   <view slot="center" class="slot-title">活动详情</view>
 </navigation-bar>
 
-<view class="event-page">
-  <image
-    class="event-page__banner"
-    src="https://qiniustatic.womenshike.top/event_bg_default.png"
-    mode="widthFix"
-  />
-</view>
+
 
 <view class="page-wrapper event-info">
-  <view class="event-info__swiper">
-
+  <view class="event-info__swiper" style="{{ userList.length > 0 ? '': 'display:none'}}" wx-if="{{userList.length > 0}}">
     <swiper class="swiper" 
       indicator-dots="{{eventInfo.options.indicatorDots}}"
       autoplay="{{eventInfo.options.autoplay}}" 
@@ -24,90 +17,92 @@
       transformer-type="scaleAndFade"
       next-margin="48px"
       bindchange="onChange"
-      bindtransition="onTransition"
     >
       <block wx:for="{{eventInfo.items}}" wx:for-item="item" wx:for-index="index">
         <swiper-item>
-          <view class="swiper-item swiper-item-{{item.info.id}} {{index === eventInfo.options.current ? 'swiper-item--active' : ''}}">
+          <view class="swiper-item swiper-item-{{item.info.id}} {{index === eventInfo.options.current ? 'swiper-item--active' : ''}}" bindtap="goAttendeeList" data-userid="{{item.info.id}}">
             <image src="{{item.path}}" mode="widthFix" lazy-load="false" />
-            <view class="swiper-item__info">
-              {{item.info.nickname}}, {{item.info.age}}
+            <view class="swiper-item__info" wx:if="{{item.info.nickname}}">
+              {{item.info.nickname}}
             </view>
           </view>
         </swiper-item>
       </block>
     </swiper>
-
     <view class="event-info__tag">
-      <view class="event-info__tag-text">我已加入</view>
+      <view class="event-info__tag-text">报名的人</view>
     </view>
   </view>
 
-  <view class="event-info__participants">
+  <view class="event-info__participants" wx:if="{{userList.length > 0}}">
     <view class="event-info__avatar-list">
-      <block wx:for="{{eventInfo.avatars}}" wx:for-item="item" wx:for-index="index">
-        <image class="event-info__avatar" src="{{item.avatar}}" />
+      <block wx:for="{{userList}}" wx:key="userId" wx:for-item="item" wx:for-index="index">
+        <image class="event-info__avatar" mode="aspectFill" src="{{item.avatarUrl || defaultAvatar}}" />
       </block>
     </view>
      <view class="event-info__avatar-more" bindtap="goAttendeeList">查看全部</view>
   </view>
 
   <view class="event-info__conditions">
-    已有 <text class="event-info__number">32</text> 人报名，仅剩 <text class="event-info__number event-info__number--warn">23</text> 个名额
+    已有 <text class="event-info__number">{{eventInfo.detail.applyCount}}</text> 人报名
+    <!--仅剩 <text class="event-info__number event-info__number--warn">23</text> 个名额 -->
   </view>
 
-  <view class="event-info__body {{authorization ? '' : 'fixed'}}">
+  <view class="event-info__body ">
     <view class="event-info__section event-info__briefly">
-      <view class="event-info__title">福田飞盘娱乐局PU（春夏）有摄影拍照</view>
+      <view class="event-info__title">{{eventInfo.detail.activityTitle}}</view>
       <view class="event-info__briefly-row">
         <image class="event-info__icon event-info__icon--calendar" src="https://qiniustatic.womenshike.top/icon-event-calendar.png" mode="heightFix" lazy-load="false" />
-        周二 04.30 20:30 – 22:30</view>
+        {{eventInfo.activityTimeDisplay}}</view>
       <view class="event-info__briefly-row">
         <image class="event-info__icon event-info__icon--address" src="https://qiniustatic.womenshike.top/icon-event-address.png" mode="heightFix" lazy-load="false" />
-        18.2km 大后运动社区霍普湖店</view>
+        {{eventInfo.activityLocationDisplay}}</view>
     </view>
 
-    <view class="event-info__content event-info__intro" wx:if="{{authorization}}">
+    <view class="event-info__content event-info__intro" wx:if="{{ eventInfo.info.intro}}">
       <view class="event-info__title">
         <view class="event-info__title-bar"></view>
         <text>活动详情</text>
       </view>
-      <text class="event-info__description">{{ eventInfo.info.intro }}</text>
+      <rich-text nodes="{{ eventInfo.info.intro }}"></rich-text>
     </view>
 
-    <view class="event-info__content event-info__images" wx:if="{{authorization}}">
+    <view class="event-info__content event-info__images" wx:if="{{eventInfo.activityContentImgList}}">
       <view class="event-info__title">
         <view class="event-info__title-bar"></view>
         <text>活动图片</text>
       </view>
       <view class="event-info__images-group">
-        <block wx:for="{{eventInfo.info.images}}">
-          <image src="{{item}}" class="event-info__images-item" mode="aspectFill" />
+        <block wx:for="{{eventInfo.activityContentImgList}}">
+          <image src="{{item}}" class="event-info__images-item" mode="widthFix" />
         </block>
       </view>
     </view>
 
-    <view class="event-info__content event-info__notice" wx:if="{{authorization}}">
+    <view class="event-info__content event-info__notice" wx:if="{{eventInfo.notice}}">
       <view class="event-info__title">
         <view class="event-info__title-bar"></view>
         <text>注意事项</text>
       </view>
-      <text class="event-info__description">{{ eventInfo.info.notice }}</text>
+      <rich-text nodes="{{ eventInfo.notice }}"></rich-text>
     </view>
 
-    <view class="event-info__footer {{authorization ? '' : 'fixed'}}">
+    <view class="event-info__footer {{authorization ? '' : 'fixed'}} {{hasHomeIndicator ? 'has-home-indicator' : ''}}">
       <view class="event-info__action">
         <view class="event-info__action-item event-info__action-my" bind:tap="goMyEvents">
-          <image class="event-info__action-icon" src="https://qiniustatic.womenshike.top/icon-event-turn-right.png" mode="heightFix" lazy-load="false" />
+          <image class="event-info__action-icon" src="https://qiniustatic.womenshike.top/icon-event-hron.png" mode="heightFix" lazy-load="false" />
           我的活动
         </view>
         
-        <view class="event-info__action-item event-info__action-share">
-          <image class="event-info__action-icon" src="https://qiniustatic.womenshike.top/icon-event-hron.png" mode="heightFix" lazy-load="false" />
+        <button class="event-info__action-item event-info__action-share" open-type="share">
+          <image class="event-info__action-icon" src="https://qiniustatic.womenshike.top/icon-event-turn-right.png" mode="heightFix" lazy-load="false" />
           分享
-        </view>
+        </button>
       </view>
-      <view class="event-info__action-join" bind:tap="onPayment">上车（¥79.00）</view>
+      <!-- 根据报名状态显示不同的按钮 -->
+      <view class="event-info__action-join {{registrationStatus.isBeforeRegistration || registrationStatus.isAfterRegistration ? 'disabled' : ''}}" bind:tap="onPayment">
+        {{registrationStatus.statusText || '上车（¥' + eventInfo.detail.activityPrice + '）'}}
+      </view>
     </view>
   </view>
 
@@ -121,14 +116,15 @@
   buttonText="{{popup.buttonText}}"
 >
   <view slot="title" class="activity-popup__title-slot">
-    您还没有身份认证
+    {{popup.title}}
+  
   </view>
     <!-- 您已经获得 <text class="activity-popup__highlight">1</text> 次免费参加活动的机会 -->
   <view slot="subtitle" class="activity-popup__subtitle-slot">
     不能关注对方，不能报名活动
   </view>
 
-  <view slot="buttom" class="activity-popup__buttom-slot" bind:tap="goWelcome"> 
-    立即注册
+  <view slot="buttom" class="activity-popup__buttom-slot" bind:tap="onConfirm"> 
+   {{popup.btnText}}
   </view>
 </activity-popup>

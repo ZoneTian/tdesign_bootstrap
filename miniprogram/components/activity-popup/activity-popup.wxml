@@ -12,7 +12,7 @@
     </view>
 
     <view class="activity-popup__icon">
-      <image class="activity-popup__icon-image" src="{{icon}}" mode="widthFix" lazy-load="false" />
+      <image class="activity-popup__icon-image" src="{{iconUrl}}" mode="widthFix" lazy-load="false" />
     </view>
 
     <view class="activity-popup__message">
@@ -26,7 +26,7 @@
     </view>
 
     <view class="activity-popup__buttom">
-      <slot name="buttom" />
+      <slot name="buttom"></slot>
     </view>
 
   </view>

@@ -34,5 +34,8 @@
     "wrap_attributes_count": 4,
     "wrap_attributes_indent_size": 2
   },
-  "editor.tabSize": 2
+  "editor.tabSize": 2,
+  "[typescript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  }
 }

@@ -1,17 +1,24 @@
-import {
-  DictDataProfession,
-  getProfession,
-  getMbti,
-  DictDataMbti,
-  getSchool,
-  DictDataSchool,
-  getSystemDictDataSchool,
-} from '../../utils/api';
+import { postRegister } from '../../utils/api';
+import { getMbtiOptions, getOccupationOptions } from '../../utils/dataSource';
 import * as navigateHelper from '../../utils/navigateHelper';
+import { getOpenID, setToken, setOpenID, setUserID } from '../../utils/auth';
+import { DebounceHelper } from '../../utils/debounce';
+import { validateChinesePhoneNumber } from '../../utils/validate';
+
+const app = getApp<
+  IAppOption & {
+    globalData: {
+      userInfo: WechatMiniprogram.UserInfo | null;
+      hasLogin: boolean;
+      isRegistered: boolean;
+      showVisible: boolean;
+    };
+  }
+>();
 
 export interface PickerOption {
   label: string;
-  value: number | string; // 按需求
+  value: number | string;
   children?: PickerOption[];
 }
 
@@ -29,14 +36,16 @@ export interface AreaChangeDetail {
 Page({
   data: {
     form: {
-      nickname: '',
+      nickName: '',
       gender: null as Option | null,
-      height: null as Option | null,
-      mbti: null as Option | null,
+      userHeight: null as Option | null,
+      userMbti: null as Option | null,
       birthday: null as Option | null,
       hometown: null as Option | null,
+      location: null as Option | null,
+      occupation: null as Option | null,
+      telephone: '',
     },
-    // picker-overlay 配置
     picker: {
       visible: false,
       field: '',
@@ -45,36 +54,31 @@ Page({
     },
     pickerOptionsMap: {
       gender: [
-        { label: '男', value: 'male' },
-        { label: '女', value: 'female' },
-        { label: '其他', value: 'other' },
+        { label: '男', value: '1' },
+        { label: '女', value: '2' },
+        { label: '其他', value: '0' },
       ],
-      height: null as Option[] | null,
+      userHeight: null as Option[] | null,
       birthday: null as Option[] | null,
-      mbti: null as Option[] | null,
-      career: null as Option[] | null,
+      userMbti: null as Option[] | null,
+      occupation: null as Option[] | null,
       income: null as Option[] | null,
-      school: null as Option[] | null,
     } as PickerOptionsMap,
   },
 
-  /** 点击“出生日期”这一行时调用 */
   showPicker(events: WechatMiniprogram.CustomEvent<{ field: 'string' }>) {
-    // data-field="birthday"，但这里不再走通用 picker，而是调用组件 show()
     const field = events.currentTarget.dataset.field;
     if (field === 'birthday') {
-      // 通过 id 拿到 date-picker 实例，然后调用它的 show()
       this.selectComponent('#birthdayPicker').show();
     }
   },
 
-  /** date-picker 组件选中后触发 */
   onBirthdayConfirm(events: WechatMiniprogram.CustomEvent<{ value: number }>) {
     const ts = events.detail.value;
 
     const birthdayOptions = {
       value: new Date(this.__formatDateDisplay(ts)).getTime().toString(),
-      label: ts, // 对应的值，例如 "150"
+      label: ts,
     };
 
     this.setData({
@@ -82,7 +86,6 @@ Page({
     });
   },
 
-  /** 把时间戳 ts 格式化成 "YYYY-MM-DD */
   __formatDateDisplay(ts: number) {
     if (!ts) return '';
     const dt = new Date(ts);
@@ -98,7 +101,6 @@ Page({
     }>,
   ) {
     const field = e.currentTarget.dataset.field;
-
     this.selectComponent('#areaPicker').onAreaPicker(field);
   },
 
@@ -128,8 +130,20 @@ Page({
     });
   },
 
-  onNicknameInput(event: WechatMiniprogram.CustomEvent<{ value: 'string' }>) {
-    this.setData({ 'form.nickname': event.detail.value });
+  onnickNameInput(event: WechatMiniprogram.CustomEvent<{ value: 'string' }>) {
+    this.setData({ 'form.nickName': event.detail.value });
+  },
+
+  onMobileInput(event: WechatMiniprogram.CustomEvent<{ value: 'string' }>) {
+    this.setData({ 'form.telephone': event.detail.value });
+  },
+
+  onMbtiInput(event: WechatMiniprogram.CustomEvent<{ value: string }>) {
+    this.setData({ 'form.userMbti': event.detail.value });
+  },
+
+  onOccupationInput(event: WechatMiniprogram.CustomEvent<{ value: string }>) {
+    this.setData({ 'form.occupation': event.detail.value });
   },
 
   onHandlePicker(event: WechatMiniprogram.CustomEvent<{ dataset: { field: string } }>) {
@@ -150,12 +164,11 @@ Page({
     const labels: Record<string, string> = {
       gender: '请选择性别',
       birthday: '请选择出生日期',
-      height: '请选择身高',
-      mbti: '请选择 Mbti',
-      school: '请选择学校',
+      userHeight: '请选择身高',
+      userMbti: '请选择MBTI',
       hometown: '请选择家乡',
       location: '请选择现居地',
-      career: '请选择职业',
+      occupation: '请选择职业',
     };
     return labels[field] || '';
   },
@@ -173,123 +186,230 @@ Page({
     this.setData({ 'picker.visible': false });
   },
 
-  onPhotoUpload() {
-    console.log('nav');
-    return navigateHelper.goPhotoUpload();
+  async onNextSetp() {
+    DebounceHelper.execute(
+      'onNextSetp',
+      async () => {
+        if (!this.validateForm()) {
+          return;
+        }
+
+        try {
+          wx.showLoading({ title: '提交中...' });
+
+          const { form } = this.data;
+          const openid = getOpenID();
+
+          if (!openid) {
+            wx.login();
+          }
+
+          const data = await wx.login();
+
+          const heightValue = form?.userHeight?.label
+            ? String(form.userHeight.label).replace('cm', '')
+            : '';
+
+          let registerParams: any = {
+            openId: openid,
+            code: data.code,
+            nickName: form.nickName,
+            gender: form.gender?.value?.[0] || 0,
+            userBirthday: form.birthday?.label || '',
+            userHeight: heightValue,
+            userMbti: String(form.userMbti?.label || ''),
+            country: 'CN',
+            occupation: String(form.occupation?.label || ''),
+            language: 'zh_CN',
+            telephone: form.telephone,
+          };
+
+          if (form.hometown) {
+            const [province, city] = form.hometown.value.toString().split('-');
+            registerParams.province = province;
+            registerParams.city = city;
+          }
+
+          if (form.location) {
+            const [presentProvince, presentCity] = form.location.value.toString().split('-');
+            registerParams.presentProvince = presentProvince;
+            registerParams.presentCity = presentCity;
+          }
+
+          const res = await postRegister(registerParams);
+
+          if (res.code === 0) {
+            const { token, userInfo } = res.data;
+
+            if (token) {
+              setToken(token);
+            }
+
+            if (userInfo) {
+              setOpenID(userInfo.openId);
+              setUserID(userInfo.id);
+
+              if (app.globalData) {
+                app.globalData.isRegistered = true;
+                (app.globalData as any).userInfo = userInfo;
+              }
+            }
+
+            wx.showToast({
+              title: '注册成功',
+              icon: 'success',
+            });
+
+            setTimeout(() => {
+              navigateHelper.goHome();
+            }, 1000);
+          } else {
+            wx.showToast({
+              title: res.msg || '注册失败',
+              icon: 'none',
+            });
+          }
+        } catch (error) {
+          console.error('注册失败:', error);
+          wx.showToast({
+            title: '注册失败，请重试',
+            icon: 'none',
+          });
+        } finally {
+          wx.hideLoading();
+        }
+      },
+      500,
+    );
+  },
+
+  validateForm() {
+    const { form } = this.data;
+
+    if (!form.nickName) {
+      wx.showToast({
+        title: '请输入昵称',
+        icon: 'none',
+      });
+      return false;
+    }
+        // 验证手机号（必填且格式正确）
+    if (!form.telephone) {
+      wx.showToast({
+        title: '手机号不能为空',
+        icon: 'none',
+      });
+      return false;
+    } else if (!validateChinesePhoneNumber(form.telephone)) {
+      wx.showToast({
+        title: '请输入正确的手机号',
+        icon: 'none',
+      });
+      return false;
+    }
+
+
+    if (!form.gender) {
+      wx.showToast({
+        title: '请选择性别',
+        icon: 'none',
+      });
+      return false;
+    }
+
+    if (!form.birthday) {
+      wx.showToast({
+        title: '请选择出生日期',
+        icon: 'none',
+      });
+      return false;
+    }
+
+    if (!form.userHeight) {
+      wx.showToast({
+        title: '请选择身高',
+        icon: 'none',
+      });
+      return false;
+    }
+
+    if (!form.userMbti) {
+      wx.showToast({
+        title: '请选择MBTI',
+        icon: 'none',
+      });
+      return false;
+    }
+
+    if (!form.hometown) {
+      wx.showToast({
+        title: '请选择家乡',
+        icon: 'none',
+      });
+      return false;
+    }
+
+    if (!form.location) {
+      wx.showToast({
+        title: '请选择现居地',
+        icon: 'none',
+      });
+      return false;
+    }
+
+    if (!form.occupation) {
+      wx.showToast({
+        title: '请选择职业',
+        icon: 'none',
+      });
+      return false;
+    }
+
+
+    return true;
+  },
+
+  onLoad() {
+    this.initFormData();
+  },
+
+  initFormData() {
+    this.setData({
+      'form.gender': this.data.pickerOptionsMap.gender[0],
+    });
   },
 
   getUserProfile() {
-    // wx.getUserInfo({
-    //   success: function (res) {
-    //     console.log(res);
-    //     var userInfo = res.userInfo;
-    //     var nickName = userInfo.nickName;
-    //     var avatarUrl = userInfo.avatarUrl;
-    //     var gender = userInfo.gender; //性别 0：未知、1：男、2：女
-    //     var province = userInfo.province;
-    //     var city = userInfo.city;
-    //     var country = userInfo.country;
-    //   },
-    // });
+    // 微信用户信息获取相关代码
   },
 
   async initHeightOptions() {
-    // 身高
-    const heightStart = 150;
-    const heightOptions: Option[] = [];
-    for (let h = heightStart; h <= 250; h++) {
-      heightOptions.push({
-        label: `${h}cm`, // 显示文字，例如 "150cm"
-        value: `${h}`, // 对应的值，例如 "150"
+    const userHeightStart = 150;
+    const userHeightOptions: Option[] = [];
+    for (let h = userHeightStart; h <= 250; h++) {
+      userHeightOptions.push({
+        label: `${h}cm`,
+        value: `${h}`,
       });
     }
     this.setData({
-      'pickerOptionsMap.height': heightOptions,
+      'pickerOptionsMap.userHeight': userHeightOptions,
     });
   },
 
   async initMbtiOptions() {
-    const { data } = (await getMbti()) as { data: DictDataMbti[] };
-
-    // const { data } = (await getMbti()) as {
-    //   data: DictDataMbti[];
-    // };
-    const mbtiOptions: Option[] = data.map((type) => ({
-      label: type.label,
-      value: type.id.toString(),
-    }));
-
-    // console.log(mbtiOptions);
-
+    // 使用公共数据源中的MBTI选项
+    const userMbtiOptions = getMbtiOptions();
     this.setData({
-      'pickerOptionsMap.mbti': mbtiOptions,
+      'pickerOptionsMap.userMbti': userMbtiOptions,
     });
   },
 
   async initCareerOptions() {
-    const { data } = (await getProfession()) as {
-      data: DictDataProfession[];
-    };
-    const carrerOptions: Option[] = data.map((type) => ({
-      label: type.label,
-      value: type.id.toString(),
-    }));
-
+    // 使用公共数据源中的职业选项
+    const occupationOptions = getOccupationOptions();
     this.setData({
-      'pickerOptionsMap.career': carrerOptions,
-    });
-  },
-
-  async initSchoolOptions() {
-    const { data } = (await getSchool()) as { data: DictDataSchool[] };
-
-    const schoolOptions: Option[] = data.map((type) => ({
-      label: type.label,
-      value: type.id.toString(),
-    }));
-    // const schoolOptions: Option[] = [
-    //   { label: '清华大学', value: '清华大学' },
-    //   { label: '北京大学', value: '北京大学' },
-    //   { label: '中国科学技术大学', value: '中国科学技术大学' },
-    //   { label: '复旦大学', value: '复旦大学' },
-    //   { label: '中国人民大学', value: '中国人民大学' },
-    //   { label: '上海交通大学', value: '上海交通大学' },
-    //   { label: '南京大学', value: '南京大学' },
-    //   { label: '同济大学', value: '同济大学' },
-    //   { label: '浙江大学', value: '浙江大学' },
-    //   { label: '南开大学', value: '南开大学' },
-    //   { label: '北京航空航天大学', value: '北京航空航天大学' },
-    //   { label: '北京师范大学', value: '北京师范大学' },
-    //   { label: '武汉大学', value: '武汉大学' },
-    //   { label: '西安交通大学', value: '西安交通大学' },
-    //   { label: '天津大学', value: '天津大学' },
-    //   { label: '华中科技大学', value: '华中科技大学' },
-    //   { label: '北京理工大学', value: '北京理工大学' },
-    //   { label: '东南大学', value: '东南大学' },
-    //   { label: '中山大学', value: '中山大学' },
-    //   { label: '华东师范大学', value: '华东师范大学' },
-    //   { label: '哈尔滨工业大学', value: '哈尔滨工业大学' },
-    //   { label: '厦门大学', value: '厦门大学' },
-    //   { label: '西北工业大学', value: '西北工业大学' },
-    //   { label: '中南大学', value: '中南大学' },
-    //   { label: '大连理工大学', value: '大连理工大学' },
-    //   { label: '四川大学', value: '四川大学' },
-    //   { label: '电子科技大学', value: '电子科技大学' },
-    //   { label: '华南理工大学', value: '华南理工大学' },
-    //   { label: '吉林大学', value: '吉林大学' },
-    //   { label: '湖南大学', value: '湖南大学' },
-    //   { label: '重庆大学', value: '重庆大学' },
-    //   { label: '山东大学', value: '山东大学' },
-    //   { label: '中国农业大学', value: '中国农业大学' },
-    //   { label: '中国海洋大学', value: '中国海洋大学' },
-    //   { label: '中央民族大学', value: '中央民族大学' },
-    //   { label: '东北大学', value: '东北大学' },
-    //   { label: '兰州大学', value: '兰州大学' },
-    //   { label: '西北农林科技大学', value: '西北农林科技大学' },
-    //   { label: '国防科技大学', value: '国防科技大学' },
-    // ];
-    this.setData({
-      'pickerOptionsMap.school': schoolOptions,
+      'pickerOptionsMap.occupation': occupationOptions,
     });
   },
 
@@ -297,6 +417,5 @@ Page({
     await this.initHeightOptions();
     await this.initMbtiOptions();
     await this.initCareerOptions();
-    await this.initSchoolOptions();
   },
 });

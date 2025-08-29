@@ -9,4 +9,33 @@ page {
 .wrapper {
   .px2rpx(width, 352);
   .px2rpx(height, 88);
+  position: relative;
+  
+  .loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    border-radius: 12rpx;
+  }
+  
+  .loading-spinner {
+    width: 60rpx;
+    height: 60rpx;
+    border: 6rpx solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    border-top-color: #fa87ac;
+    animation: spin 1s linear infinite;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

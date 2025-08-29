@@ -2,6 +2,48 @@
 @import 'styles/_mixins.less';
 
 /**app.wxss**/
+/* 去掉微信button自带的所有样式 */
+button {
+  padding: 0;
+  margin: 0;
+  background: none;
+  border: none;
+  text-align: inherit;
+  line-height: inherit;
+  border-radius: 0;
+  box-sizing: border-box;
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+  overflow: visible;
+}
+
+button::after {
+  border: none;
+  border-radius: 0;
+  background: none;
+}
+
+/* 去掉按钮点击时的效果 */
+button:active {
+  opacity: 1;
+  background: none;
+}
+
+button:hover {
+  opacity: 1;
+  background: none;
+}
+
+button:focus {
+  outline: none;
+}
+
+/* 去掉点击高亮效果 */
+view, text, image, button, input {
+  -webkit-tap-highlight-color: transparent;
+}
+
 .container {
   height: 100%;
   display: flex;
@@ -20,7 +62,6 @@ page {
 }
 
 .page-wrapper {
-  .px2rpx(padding-top,17);
   display: flex;
   flex-direction: column;
 }

@@ -6,44 +6,44 @@
 
     <view class="profile-container info">
 
-      <view class="info-avator">
-        <image src="https://qiniustatic.womenshike.top/placeholder_avator.jpg" mode="aspectFit|aspectFill|widthFix" lazy-load="false" />
-        <view class="info-edit-icon" bindtap="onEditProfile">
+      <view class="info-avator" bindtap="onEditAvator">
+        <image src="{{profile.avatarUrl || defaultAvatar}}" mode="aspectFit|aspectFill|widthFix" lazy-load="false" />
+       <!-- <view class="info-edit-icon" >
           <image src="https://qiniustatic.womenshike.top/icon_edit_avator.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" />
-        </view>
+        </view> -->
       </view>
 
       <view class="info-more">
-        <view class="info-nickname">空白K</view>
-        <view class="info-edit" bindtap="onEditProfile">
+        <view class="info-nickname"  bindtap="onEditProfile">{{profile.nickName}}</view>
+        <view class="info-edit"  bindtap="onEditProfile">
           <image src="https://qiniustatic.womenshike.top/icon_edit.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" />
         </view>
-        <view class="info-tags">
+      <view class="info-tags" wx:if="{{photoReviewStatus === 1}}">
           <view class="approved">
-            <text>已认证</text>
+            <text>人脸已认证</text>
             <image src="https://qiniustatic.womenshike.top/icon_tags_approved.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" />
           </view>
         </view>
-      </view>
+      </view> 
 
       <view class="info-point">
         <view class="info-point-item" ontap="onMyLikes">
-          <view class="point">{{profile.mylikes}}</view>
+          <view class="point">{{profile.followCount}}</view>
           <view class="text">我喜欢的</view>
         </view>
         <view class="info-point-item" ontap="onLikesMe">
-          <view class="point">{{profile.likesme}}</view>
+          <view class="point">{{profile.fansCount}}</view>
           <view class="text">喜欢我的</view>
         </view>
       </view>
 
-      <view class="notes-login" bind:tap="goWelcome">立即注册
+      <view class="notes-login" bind:tap="goWelcome" wx:if="{{!isRegistered}}">立即注册
         <image src="https://qiniustatic.womenshike.top/icon_arrow_r.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" />
       </view>
 
     </view>
 
-    <view class="profile-container events single">
+    <view class="profile-container events single" wx:if="{{isRegistered}}">
       <view class="profile-container-item" bindtap="onMyEvents">
         <view class="icon ">
           <image class="event" src="https://qiniustatic.womenshike.top/icon_events.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" />
@@ -53,11 +53,11 @@
       </view>
     </view>
     <view class="profile-container function multi">
-      <view class="profile-container-item" bindtap="onProfileVerification">
+      <view class="profile-container-item"  wx:if="{{isRegistered}}" bindtap="onProfileVerification">
         <view class="icon ">
           <image class="identify" src="https://qiniustatic.womenshike.top/icon_identify.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" />
         </view>
-        <view class="content">身份认证</view>
+        <view class="content">人脸认证</view>
         <view class="damger">
           <image class="" src="https://qiniustatic.womenshike.top/icon_damger_angle_card.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" />
           实名认证

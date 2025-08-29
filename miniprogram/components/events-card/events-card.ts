@@ -1,4 +1,4 @@
-import * as navigateHelper from "../../utils/navigateHelper";
+import * as navigateHelper from '../../utils/navigateHelper';
 
 Component({
   properties: {
@@ -6,26 +6,26 @@ Component({
     subtitle: String,
     status: {
       type: String,
-      value: "default", // 可为：signing / registered / ended / interesting
+      value: 'default', // 可为：signing / registered / ended / interesting
     },
     statusText: String,
     statusTagText: String, // <-- 新增字段，如 "报名中"
     condition: String,
-    images: {
-      type: Array,
-      value: [],
-    },
+    images: String,
     avatars: {
       type: Array,
       value: [],
     },
+    statusClass: String,
+    eventId: String,
   },
   methods: {
     onPublicProfile() {
       return navigateHelper.goPublicProfile();
     },
     onEventsInfo() {
-      return navigateHelper.goEventsInfo();
+      const eventId = this.properties.eventId;
+      return navigateHelper.goEventsInfo(eventId);
     },
   },
 });

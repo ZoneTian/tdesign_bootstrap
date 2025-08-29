@@ -3,7 +3,7 @@
 </navigation-bar>
 
 <view class="page-wrapper my-events">
-  
+  <!--
   <view class="events-tabs-wrapper">
     <view class="events-tabs"></view>
     <view 
@@ -11,46 +11,26 @@
       data-index="1"
       bindtap="onTabChange">可报名</view>
     <view 
-      class="events-btn fr {{config.tab === 0 ? 'action' : ''}}"
-      data-index="0"
+      class="events-btn fr {{config.tab === 2? 'action' : ''}}"
+      data-index="2"
       bindtap="onTabChange">已结束</view>
-  </view>
+  </view> -->
 
   <view class="my-events-group">
 
-    <events-card
-      title="20:30开始回南路温莎唱歌 | 4h"
-      subtitle="周日04.27 21:58 | 12.9km 温莎KTV"
-      status="registered"
-      statusText="已报名"
-      statusTagText="报名中"
-      condition="25人已上车"
-      images="{{ eventImages }}"
-      avatars="{{ avatarImaes }}"
-    />
-
-    <events-card
-      title="20:30开始回南路温莎唱歌 | 4h"
-      subtitle="周日04.27 21:58 | 12.9km 温莎KTV"
-      status="ended"
-      statusText="已结束"
-      statusTagText="报名中"
-      condition="25人已上车"
-      images="{{ eventImages }}"
-      avatars="{{ avatarImaes }}"
-    />
-
-    <events-card
-      title="20:30开始回南路温莎唱歌 | 4h"
-      subtitle="周日04.27 21:58 | 12.9km 温莎KTV"
-      status="signing"
-      statusText="报名中"
-      statusTagText="报名中"
-      condition="25人已上车"
-      images="{{ eventImages }}"
-      avatars="{{ avatarImaes }}"
-    />
-
+      <block wx:for="{{tabData[config.tab].activityList}}" wx:key="id">
+      <events-card
+        title="{{item.activityTitle}}"
+        subtitle="{{item.subtitle}}"
+        status="{{item.status}}"
+        statusClass="{{item.statusClass}}"
+        statusText="{{item.statusText}}"
+        statusTagText="{{item.statusTagText}}"
+        condition="{{item.condition}}"
+        images="{{[item.mainCoverImage]}}"
+        eventId="{{item.id}}"
+      />
+    </block>  
   </view>
 
 </view>

@@ -1,31 +1,52 @@
-<navigation-bar back="{{true}}" color="black"></navigation-bar>
+ <navigation-bar back="{{true}}" color="black"></navigation-bar>
 
 <view class="page-wrapper personal-info">
+<!--
   <view class="processing-group">
     <view class="processing reading"></view>
     <view class="processing"></view>
-  </view>
+  </view> -->
   <view class="register-form">
 
     <!-- 昵称 -->
     <view 
       class="form-item"
-      data-field="nickname"
+      data-field="nickName"
       bind:tap="getUserProfile"
     >
       <view class="label-group">
-        <view class="label">昵称</view>
-        <view wx:if="{{ !form.nickname }}" class="placeholder">请输入昵称</view>
+        <view class="label">昵称<text class="disabled"> *</text></view>
+        <view wx:if="{{ !form.nickName }}" class="placeholder">请输入昵称</view>
       </view>
-      <view class="label-result">
+      <view class="label-result-input" >
         <input
           type="text"
           class="form-input"
-          value="{{form.nickname}}"
-          bindinput="onNicknameInput"
+          value="{{form.nickName}}"
+          bindinput="onnickNameInput"
         />
       </view>
     </view>
+     <!-- 手机号 -->
+    <view 
+      class="form-item"
+      data-field="telephone"
+      bind:tap="getUserProfile"
+    >
+      <view class="label-group">
+        <view class="label">手机号<text class="disabled"> *</text></view>
+        <view wx:if="{{ !form.telephone }}" class="placeholder">请输入手机号</view>
+      </view>
+      <view class="label-result-input" >
+        <input
+          type="text"
+          class="form-input"
+          value="{{form.telephone}}"
+          bindinput="onMobileInput"
+        />
+      </view>
+    </view>
+    
 
     <view
       class="form-item"
@@ -47,14 +68,14 @@
       </view>
     </view>
 
-    <view
+        <view
       class="form-item"
       bindtap="showPicker"
       data-field="birthday"
       disabled
     >
       <view class="label-group">
-        <text class="label">出生日期</text>
+        <text class="label">出生日期<text class="disabled"> *</text></text>
         <view wx:if="{{ !form.birthday }}" class="placeholder">请选择出生日期</view>
       </view>
       <view class="label-result">
@@ -70,62 +91,42 @@
     <view 
       class="form-item" 
       bindtap="onHandlePicker" 
-      data-field="height"
+      data-field="userHeight"
        
     >
       <view class="label-group">
-        <text class="label">身高</text>
-        <view wx:if="{{ !form.height }}" class="placeholder">请选择身高</view>
+        <text class="label">身高<text class="disabled"> *</text></text>
+        <view wx:if="{{ !form.userHeight }}" class="placeholder">请选择身高</view>
       </view>
       <view class="label-result">
         <input 
           type="text" 
           class="form-input" 
-          value="{{form.height && form.height.label}}"
+          value="{{form.userHeight && form.userHeight.label}}"
           disabled
         />
       </view>
     </view>
 
-    <view 
-      class="form-item" 
-      bindtap="onHandlePicker" 
-      data-field="school"
-    >
-      <view class="label-group">
-        <text class="label">学校</text>
-        <view wx:if="{{ !form.school }}" class="placeholder">请选择学校</view>
-      </view>
-      <view class="label-result">
-        <input 
-          type="text" 
-          class="form-input" 
-          value="{{form.school && form.school.label}}"
-          placeholder="" 
-        />
-      </view>
-    </view>
 
     <view 
-      class="form-item" 
-      bindtap="onHandlePicker" 
-      data-field="mbti"
-       
+      class="form-item"
+      bindtap="onHandlePicker"
+      data-field="userMbti"
     >
       <view class="label-group">
-        <text class="label">Mbit</text>
-        <view wx:if="{{ !form.mbti }}" class="placeholder">请选择Mbit</view>
+        <text class="label">MBTI<text class="disabled"> *</text></text>
+        <view wx:if="{{ !form.userMbti }}" class="placeholder">请选择MBTI</view>
       </view>
       <view class="label-result">
         <input 
           type="text" 
           class="form-input" 
-          value="{{form.mbti && form.mbti.label}}"
+          value="{{form.userMbti && form.userMbti.label}}"
           disabled
         />
       </view>
     </view>
-
 
 
     <view 
@@ -134,7 +135,7 @@
       data-field="hometown"
     >
       <view class="label-group">
-        <text class="label">家乡</text>
+        <text class="label">家乡<text class="disabled"> *</text></text>
         <view wx:if="{{ !form.hometown }}" class="placeholder">请选择家乡</view>
       </view>
       <view class="label-result">
@@ -147,13 +148,13 @@
       </view>
     </view>
 
-    <view 
+  <view 
       class="form-item" 
       bindtap="showRegionPicker"
       data-field="location"
     >
       <view class="label-group">
-        <text class="label">现居地</text>
+        <text class="label">现居地<text class="disabled"> *</text></text>
         <view wx:if="{{ !form.location }}" class="placeholder">请选择现居地</view>
       </view>
       <view class="label-result">
@@ -169,27 +170,28 @@
     <view 
       class="form-item" 
       bindtap="onHandlePicker" 
-      data-field="career"
-      
+      data-field="occupation"
     >
       <view class="label-group">
-        <text class="label">职业</text>
-        <view wx:if="{{ !form.career }}" class="placeholder">请选择职业</view>
+        <text class="label">职业<text class="disabled"> *</text></text>
+        <view wx:if="{{ !form.occupation }}" class="placeholder">请选择职业</view>
       </view>
       <view class="label-result">
         <input 
           type="text" 
           class="form-input" 
-          value="{{form.career && form.career.label}}"
+          value="{{form.occupation && form.occupation.label}}"
           disabled
         />
       </view>
     </view>
+    
 
   </view>
+  <view class="form-submit" bindtap="onNextSetp">提交</view>
 </view>
 
-<view class="form-submit" bindtap="onPhotoUpload">下一步</view>
+
 
 <date-picker
   id="birthdayPicker"
