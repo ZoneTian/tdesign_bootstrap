@@ -13,6 +13,7 @@ import { getUserID } from '../../../utils/auth';
 import { DebounceHelper, NavigateDebounce } from '../../../utils/debounce';
 import { validateChinesePhoneNumber } from '../../../utils/validate';
 
+
 export interface PickerOption {
   label: string;
   value: number | string;
@@ -23,11 +24,6 @@ export interface AreaChangeDetail {
   text: string[];
   value: string[];
 }
-
-type Dataset = {
-  field: string;
-  position: '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7';
-};
 
 Page({
   data: {
@@ -51,7 +47,7 @@ Page({
       montain: null as any,
       life: null as any,
       smile: null as any,
-      telephone:''
+      telephone: ''
     },
     // picker-overlay 配置
     picker: {
@@ -138,28 +134,51 @@ Page({
         return;
       }
 
-      const res = await getUserPhoto(uid);
+      // 确保uid是数字类型
+      const numericUid = typeof uid === 'string' ? parseInt(uid, 10) : uid;
+      const res = await getUserPhoto(numericUid);
 
       if (res.code === 0 && res.data) {
         const { socialImg } = res.data;
-      
-        
+
+
         // 根据照片列表设置表单中的照片字段
         if (socialImg && socialImg.length > 0) {
-            const socialImgSort = socialImg.sort((a, b) => b.imgType - a.imgType);
+          const socialImgSort = socialImg.sort((a, b) => a.sort - b.sort);
           // 假设照片按照特定顺序排列
           const photoFields = ['main', 'careful', 'confidence', 'montain', 'life', 'smile'];
           const photoData: Record<string, any> = {};
 
           socialImgSort.forEach((item, index) => {
             if (index < photoFields.length) {
-              photoData[`form.${photoFields[index]}`] = {
+              // 根据照片的审核状态设置对应的CSS类名
+              let imgReviewStatus = '';
+              let imgReviewStatusText = '';
+              if (item.imgReviewStatus === 1) {
+                imgReviewStatus = ''
+                imgReviewStatusText = '';
+              } else if (item.imgReviewStatus === 2) {
+                imgReviewStatus = 'rejected';
+                imgReviewStatusText = '审核不通过';
+                // 审核不通过
+              } else if (item.imgReviewStatus === 0) {
+                imgReviewStatus = 'pending'; // 待审核
+                imgReviewStatusText = '待审核';
+
+              }
+              // 0或其他值保持为空，表示待审核状态
+
+              photoData[`form.${photoFields[item.sort || index]}`] = {
                 url: item.socializingImgUrl,
                 position: index.toString(),
-                id:item.id
+                id: item.id,
+                sort: item.sort,
+                imgReviewStatus: imgReviewStatus,
+                imgReviewStatusText
               };
             }
           });
+          console.log(photoData, 'zone');
 
           this.setData(photoData);
         }
@@ -259,9 +278,9 @@ Page({
       hometown = { label: hometownLabel, value: hometownLabel };
     }
 
-    // 现居地使用 presentProvince 和 presentCity
-    if (userDetail.presentProvince && userDetail.presentCity) {
-      const locationLabel = `${userDetail.presentProvince}-${userDetail.presentCity}`;
+    // 现居地也使用 province 和 city
+    if (userDetail.province && userDetail.city) {
+      const locationLabel = `${userDetail.province}-${userDetail.city}`;
       location = { label: locationLabel, value: locationLabel };
     }
 
@@ -383,7 +402,7 @@ Page({
   onnickNameInput(event: WechatMiniprogram.CustomEvent<{ value: 'string' }>) {
     this.setData({ 'form.nickName': event.detail.value });
   },
-    onMobileInput(event: WechatMiniprogram.CustomEvent<{ value: 'string' }>) {
+  onMobileInput(event: WechatMiniprogram.CustomEvent<{ value: 'string' }>) {
     this.setData({ 'form.telephone': event.detail.value });
   },
 
@@ -423,7 +442,7 @@ Page({
 
   onHandlePicker(event: WechatMiniprogram.CustomEvent<{ dataset: { field: string } }>) {
     const { pickerOptionsMap } = this.data;
-    const field = event.currentTarget.dataset.field as string;
+    const field = event.currentTarget.dataset.field as keyof typeof pickerOptionsMap;
     const opts = pickerOptionsMap[field];
     if (!opts || opts.length === 0) return;
 
@@ -493,9 +512,10 @@ Page({
   // 图片上传成功回调
   async onUploadSuccess(
     event: WechatMiniprogram.CustomEvent<
-      ResponseOploadSuccess & {
+      {
+        file?: { url?: string };
         currentTarget: {
-          dataset: Dataset;
+          dataset: { field: string; position: string };
         };
       }
     >,
@@ -637,27 +657,31 @@ Page({
       }
 
       // 收集所有已上传图片的URL
-      let socialImages: {}[] = [];
-      const photoFields = ['main', 'careful', 'confidence', 'montain', 'life', 'smile'];
+      const socialImages: { socializingImgUrl: string; imgType: number; id?: number, sort: number }[] = [];
+      const photoFields = ['main', 'careful', 'confidence', 'montain', 'life', 'smile'] as const;
       // 验证至少上传一张图片
-  
-      photoFields.forEach((field) => {
-        if (form[field] && form[field].url ) {
+
+      photoFields.forEach((field, index) => {
+        const photoItem = form[field];
+        if (photoItem && typeof photoItem === 'object' && 'url' in photoItem && photoItem.url) {
           socialImages.push({
-            socializingImgUrl: form[field].url,
-            imgType: field === 'main' ? 1 : 0,
-            id: form[field].id,
+            socializingImgUrl: photoItem.url,
+            imgType: field === 'main' ? 0 : 1,
+            id: 'id' in photoItem ? photoItem.id : undefined,
+            sort: index
           });
         }
       });
-    if (socialImages.length === 0) {
+      if (socialImages.length === 0) {
         wx.showToast({
           title: '请至少上传一张图片',
           icon: 'none',
         });
         return;
       }
-      socialImages = socialImages.filter((item) => !item.id);
+
+      // 过滤掉已有id的图片（表示已上传过）
+      const newSocialImages = socialImages.filter((item) => !item.id);
 
       // 并行调用更新用户信息和上传社交图片接口
       const [userInfoRes, uploadImagesRes] = await Promise.all([
@@ -665,8 +689,8 @@ Page({
         updateUserInfo(updateParams),
 
         // 如果有图片，则调用上传社交图片接口
-        socialImages.length > 0
-          ? uploadSocialImages(userDetail.id, socialImages)
+        newSocialImages.length > 0
+          ? uploadSocialImages(userDetail.id, newSocialImages)
           : Promise.resolve({ code: 0, data: null, msg: '没有图片需要上传' }),
       ]);
 
@@ -739,21 +763,21 @@ Page({
       });
       return false;
     }
-    
-       // 验证手机号（必填且格式正确）
-          if (!form.telephone) {
-            wx.showToast({
-              title: '手机号不能为空',
-              icon: 'none',
-            });
-            return false;
-          } else if (!validateChinesePhoneNumber(form.telephone)) {
-            wx.showToast({
-              title: '请输入正确的手机号',
-              icon: 'none',
-            });
-            return false;
-          }
+
+    // 验证手机号（必填且格式正确）
+    if (!form.telephone) {
+      wx.showToast({
+        title: '手机号不能为空',
+        icon: 'none',
+      });
+      return false;
+    } else if (!validateChinesePhoneNumber(form.telephone)) {
+      wx.showToast({
+        title: '请输入正确的手机号',
+        icon: 'none',
+      });
+      return false;
+    }
 
     return true;
   },

@@ -17,6 +17,7 @@ page {
   display: flex;
   flex-direction: column;
 }
+
 .header-container {
   display: flex;
   flex-direction: row;
@@ -43,6 +44,7 @@ page {
   border-radius: 30rpx;
   box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
 }
+
 .picture-page {
   .padding-sides();
 
@@ -57,6 +59,7 @@ page {
       display: block;
     }
   }
+
   .picture-wall {
     display: flex;
     flex-direction: row;
@@ -76,7 +79,7 @@ page {
         .px2rpx(gap, 10);
       }
 
-      > .picture-main {
+      >.picture-main {
         .px2rpx(width, 226);
         .px2rpx(height, 226);
 
@@ -135,9 +138,43 @@ page {
         .font-group(13, 400);
       }
     }
+
     .uploaded-image-wrapper {
       width: 100%;
       height: 100%;
+
+      .img-status {
+        position: absolute;
+        top: 10rpx;
+        left: 10rpx;
+        background-color: #888888; /* 默认灰色 - 待审核 */
+        color: #fff;
+        border-radius: 4px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 28rpx;
+        z-index: 10;
+        font-family: PingFang SC;
+        font-weight: 500;
+        font-style: normal;
+        font-size: 10px;
+        line-height: 100%;
+        letter-spacing: 0%;
+        vertical-align: middle;
+        padding: 4px 6px;
+      }
+      
+      /* 审核通过 - 绿色 */
+      .img-status.approved {
+        background-color: #07C160;
+      }
+      
+      /* 审核不通过 - 红色 */
+      .img-status.rejected {
+        background-color: #FF7878;
+      }
+
       .close-icon {
         position: absolute;
         top: 10rpx;
@@ -151,16 +188,18 @@ page {
         justify-content: center;
         align-items: center;
         font-size: 28rpx;
-        line-height: 28rpx;
+        line-height: 40rpx;
         padding-bottom: 2rpx;
         z-index: 10;
       }
     }
-    .uploaded-image-wrapper > .uploaded-image {
-      width: calc(100% - 2px);
-      height: calc(100% - 2px);
-      border-radius: 12rpx;
+
+    .uploaded-image-wrapper>.uploaded-image {
+      width: 100%;
+      height: 100%;
+      border-radius: 20rpx;
     }
+
     .picture-placeholder {
       transform: translateX(calc(136rpx * @target-width / @design-width));
 
@@ -179,6 +218,8 @@ page {
           object-fit: cover;
         }
 
+
+
         .close-icon {
           position: absolute;
           top: 10rpx;
@@ -192,6 +233,7 @@ page {
           justify-content: center;
           align-items: center;
           font-size: 28rpx;
+          line-height: 40rpx;
           z-index: 10;
         }
       }
@@ -208,12 +250,12 @@ page {
   flex-direction: row;
   justify-content: space-between;
   .padding-sides();
-  .px2rpx(margin-bottom,19);
+  .px2rpx(margin-bottom, 19);
 }
 
 .processing {
-  .px2rpx(width,170);
-  .px2rpx(height,5);
+  .px2rpx(width, 170);
+  .px2rpx(height, 5);
   border-radius: 100;
   background-color: #ccccd4;
 
@@ -246,11 +288,12 @@ page {
     .px2rpx(padding-top, 8);
     .px2rpx(padding-bottom, 8);
 
-    > .label {
+    >.label {
       .px2rpx(height, 34);
       .px2rpx(line-height, 34);
     }
-    > .placeholder {
+
+    >.placeholder {
       .px2rpx(height, 34);
       .px2rpx(line-height, 34);
       color: #9196a3;
@@ -283,21 +326,24 @@ page {
   }
 
   &.last-form-item {
-    .px2rpx(border-width,0);
+    .px2rpx(border-width, 0);
   }
+
   .form-input {
-    .padding(6,18,6,0);
+    .padding(6, 18, 6, 0);
     text-align: right;
     color: #9196a3;
   }
 }
 
 .label {
-  .font-group(16,600);
+  .font-group(16, 600);
   color: #212121;
+
   .disabled {
     color: #9196a3;
-    .font-group(16,400);
+    .font-group(16, 400);
+
     .adding {
       .font-group(14, 400);
     }
@@ -321,7 +367,7 @@ page {
 
   .px2rpx(border-radius, 12);
 
-  .font-group(18,600);
+  .font-group(18, 600);
 
   color: #fff;
 
@@ -329,8 +375,8 @@ page {
 
   text-align: center;
 
-  .px2rpx(height,58);
-  .px2rpx(line-height,58);
+  .px2rpx(height, 58);
+  .px2rpx(line-height, 58);
 
   .px2rpx(margin-bottom, @safe-bottom);
 }
@@ -344,19 +390,21 @@ page {
   align-items: center;
   justify-content: center;
 
-  > image {
+  >image {
     .px2rpx(width, 32.432);
     .px2rpx(height, 30);
   }
 
-  > text {
+  >text {
     color: #a7a7a7;
     .font-group(13, 400);
   }
 }
+
 .placeholder-pic {
   width: 100%;
 }
+
 .empty-view {
   background: #f4f4f4;
   width: 100vw;
@@ -430,6 +478,7 @@ page {
   .font-group(16);
   color: #666;
 }
+
 .t-popup--bottom {
   background-color: #fff !important;
 }

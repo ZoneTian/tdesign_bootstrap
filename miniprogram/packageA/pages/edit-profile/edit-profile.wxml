@@ -14,6 +14,7 @@
         <view class="picture-main">
           <block wx:if="{{form.main && form.main.url}}">
             <view class="uploaded-image-wrapper">
+              <view wx:if="{{form.main.imgReviewStatus}}" class="img-status {{form.main.imgReviewStatus}}">{{form.main.imgReviewStatusText}}</view>
               <image class="uploaded-image" src="{{form.main.url}}" mode="aspectFill" />
               <view class="close-icon" bindtap="onRemoveImage" data-field="main" data-id="{{form.main.id}}">×</view>
             </view>
@@ -41,6 +42,7 @@
           <view class="picture-public">
             <block wx:if="{{form.careful && form.careful.url}}">
               <view class="uploaded-image-wrapper">
+                <view wx:if="{{form.careful.imgReviewStatus}}" class="img-status {{form.careful.imgReviewStatus}}">{{form.careful.imgReviewStatusText}}</view>
                 <image class="uploaded-image" src="{{form.careful.url}}" mode="aspectFill" />
                 <view class="close-icon" bindtap="onRemoveImage" data-field="careful" data-id="{{form.careful.id}}">×</view>
               </view>
@@ -66,6 +68,7 @@
           <view class="picture-public">
             <block wx:if="{{form.confidence && form.confidence.url}}">
                 <view class="uploaded-image-wrapper">
+                  <view wx:if="{{form.confidence.imgReviewStatus}}" class="img-status {{form.confidence.imgReviewStatus}}">{{form.confidence.imgReviewStatusText}}</view>
                   <image class="uploaded-image" src="{{form.confidence.url}}" mode="aspectFill" />
                   <view class="close-icon" bindtap="onRemoveImage" data-field="confidence" data-id="{{form.confidence.id}}">×</view>
                 </view>
@@ -98,6 +101,7 @@
         <view class="picture-public">
            <block wx:if="{{form.montain && form.montain.url}}">
               <view class="uploaded-image-wrapper">
+                <view wx:if="{{form.montain.imgReviewStatus}}" class="img-status {{form.montain.imgReviewStatus}}">{{form.montain.imgReviewStatusText}}</view>
                 <image class="uploaded-image" src="{{form.montain.url}}" mode="aspectFill"  />
                 <view class="close-icon" bindtap="onRemoveImage" data-field="montain" data-id="{{form.montain.id}}">×</view>
               </view>
@@ -125,6 +129,7 @@
         <view class="picture-public">
           <block wx:if="{{form.life && form.life.url}}">
               <view class="uploaded-image-wrapper">
+                <view wx:if="{{form.life.imgReviewStatusText}}" class="img-status {{form.life.imgReviewStatus}}">{{form.life.imgReviewStatusText}}</view>
                 <image class="uploaded-image" src="{{form.life.url}}" mode="aspectFill" />
                 <view class="close-icon" bindtap="onRemoveImage" data-field="life" data-id="{{form.life.id}}">×</view>
               </view>
@@ -152,6 +157,7 @@
         <view class="picture-public">
          <block wx:if="{{form.smile && form.smile.url}}">
               <view class="uploaded-image-wrapper">
+                <view wx:if="{{form.smile.imgReviewStatusText}}" class="img-status {{form.smile.imgReviewStatus}}">{{form.smile.imgReviewStatusText}}</view>
                 <image class="uploaded-image" src="{{form.smile.url}}" mode="aspectFill" />
                 <view class="close-icon" bindtap="onRemoveImage" data-field="smile" data-id="{{form.smile.id}}">×</view>
               </view>

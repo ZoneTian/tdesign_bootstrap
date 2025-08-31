@@ -21,7 +21,7 @@
       <block wx:for="{{eventInfo.items}}" wx:for-item="item" wx:for-index="index">
         <swiper-item>
           <view class="swiper-item swiper-item-{{item.info.id}} {{index === eventInfo.options.current ? 'swiper-item--active' : ''}}" bindtap="goAttendeeList" data-userid="{{item.info.id}}">
-            <image src="{{item.path}}" mode="widthFix" lazy-load="false" />
+            <image src="{{item.path}}" mode="aspectFit" lazy-load="false" />
             <view class="swiper-item__info" wx:if="{{item.info.nickname}}">
               {{item.info.nickname}}
             </view>

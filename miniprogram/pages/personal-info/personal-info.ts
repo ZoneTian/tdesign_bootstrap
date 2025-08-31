@@ -293,7 +293,7 @@ Page({
       });
       return false;
     }
-        // 验证手机号（必填且格式正确）
+    // 验证手机号（必填且格式正确）
     if (!form.telephone) {
       wx.showToast({
         title: '手机号不能为空',

@@ -4,9 +4,16 @@ import * as navigateHelper from '../../utils/navigateHelper';
 
 Page({
   data: {
-    agreement: true,
+    agreement: false,
   },
   async onLogin() {
+    if (!this.data.agreement) {
+      wx.showToast({
+        title: '请先同意用户协议和隐私政策',
+        icon: 'none'
+      });
+      return;
+    }
     wx.login({
       success: async (res) => {
         console.log(res);
@@ -15,17 +22,28 @@ Page({
 
           try {
             const response = await postLogin(requestConfig);
-            if (response.code === 0 && response.data.accessToken) {
-              setToken(response.data.accessToken);
-            }
-            if (response.code === 0 && response.data.openid) {
-              setOpenID(response.data.openid);
-            }
-            if (response.code === 0 && response.data.userId) {
-              setUserID(response.data.userId);
+            if (response.code === 0) {
+              const { token, userInfo, registeredFlag } = response.data;
+              if (userInfo) {
+                setToken(token);
+                setOpenID(userInfo.openId);
+                setUserID(userInfo.id);
+
+                // 确保gender和language类型正确
+                const formattedUserInfo = {
+                  ...userInfo,
+                  gender: userInfo.gender as 0 | 1 | 2,
+                  language: userInfo.language as "en" | "zh_CN" | "zh_TW"
+                };
+                const app = getApp();
+                app.globalData.hasLogin = true;
+                app.globalData.isRegistered = registeredFlag;
+                app.globalData.userInfo = formattedUserInfo; // 保存用户详细信息
+
+              }
+              this.goHome()
             }
 
-            return navigateHelper.goPersonalInfo();
           } catch (err) {
             console.error('登录请求失败：', err);
           }

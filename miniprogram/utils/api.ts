@@ -284,7 +284,7 @@ export const getMyActivityList = async (
 // 上传社交图片
 export const uploadSocialImages = async (
   userId: number,
-  socialImg: string[],
+  socialImg: {}[],
 ): Promise<Res<any>> => {
   const requestConfig: RequestOptions = {
     url: '/v1/mp/user/uploadSocialImg',
