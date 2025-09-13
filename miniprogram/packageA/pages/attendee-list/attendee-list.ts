@@ -56,7 +56,8 @@ Page({
       const res = await getActivityApplyUserList(activityId, page, this.data.pageSize);
       if (res.code === 0 && res.data) {
         // 处理分页数据
-        const newItems = res.data.list || [];
+        let newItems = res.data.list || [];
+        newItems = newItems.filter((d) => d.userCoverImg)
         const currentItems = page === 1 ? [] : this.data.attendeeList.items;
 
         this.setData({

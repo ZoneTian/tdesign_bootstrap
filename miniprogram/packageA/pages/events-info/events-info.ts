@@ -88,7 +88,7 @@ Page({
       this.fetchActivityApplyUserList(this.data.eventId, this.data.currentPage);
     }
   },
-  goUserDetail(e:any) {
+  goUserDetail(e: any) {
     const userId = e.currentTarget.dataset.userid;
     // 跳转到用户主页，并携带userId参数
     NavigateDebounce.navigateTo(
@@ -104,14 +104,15 @@ Page({
     try {
       const res = await getActivityApplyUserList(id, page, this.data.pageSize);
       if (res.code === 0 && res.data) {
-        if(res.data.list.length === 0) {return }
+        if (res.data.list.length === 0) { return }
         // 处理分页数据
         const newUsers = res.data.list || [];
         const currentUsers = page === 1 ? [] : this.data.eventInfo.userList;
         const allUsers = [...currentUsers, ...newUsers];
+        const userAvatarList = allUsers.filter((user) => user.userCoverImg);
 
         // 将用户头像添加到轮播图中
-        const swiperItems = allUsers.map((user, index) => ({
+        const swiperItems = userAvatarList.map((user, index) => ({
           path: user.userCoverImg || DEFAULT_AVATAR,
           info: {
             id: user.userId,
@@ -120,20 +121,9 @@ Page({
           },
         }));
 
-        // 如果没有用户头像，使用活动主图作为默认
-        if (swiperItems.length === 0 && this.data.eventInfo.detail.mainCoverImage) {
-          swiperItems.push({
-            path: this.data.eventInfo.detail.mainCoverImage,
-            info: {
-              id: this.data.eventInfo.detail.id,
-              nickname: this.data.eventInfo.detail.activityTitle || '活动主图',
-              age: '',
-            },
-          });
-        }
-
         this.setData({
           userList: allUsers,
+          userAvatarList: allUsers.filter((user) => user.avatarUrl),
           'eventInfo.items': swiperItems, // 更新轮播图数据
           currentPage: page + 1,
           total: res.data.total || 0,
@@ -147,7 +137,7 @@ Page({
     } catch (error) {
       console.error('获取活动报名用户列表失败:', error);
     } finally {
-      this.setData({ loading: false,  }) // 更新轮播图数据 });
+      this.setData({ loading: false, }) // 更新轮播图数据 });
     }
   },
 
@@ -190,15 +180,15 @@ Page({
         // 设置轮播图（初始状态，后续会被用户头像替换）
         const swiperItems = detail.mainCoverImage
           ? [
-              {
-                path: detail.mainCoverImage,
-                info: {
-                  id: detail.id,
-                  nickname: detail.activityTitle,
-                  age: '',
-                },
+            {
+              path: detail.mainCoverImage,
+              info: {
+                id: detail.id,
+                nickname: detail.activityTitle,
+                age: '',
               },
-            ]
+            },
+          ]
           : [];
 
         // 格式化活动时间和地点
@@ -234,7 +224,8 @@ Page({
           } else {
             // 可以报名
             canRegister = true;
-            statusText = `上车（¥${detail.activityPrice}）`;
+            // statusText = `上车（¥${detail.activityPrice}）`;
+            statusText = `立刻报名`;
           }
         }
 
@@ -345,7 +336,7 @@ Page({
       // 未授权
       this.setData({
         showVisible: true,
-         'popup.icon': !app.globalData.isRegistered ? 'register' : 'identify',
+        'popup.icon': !app.globalData.isRegistered ? 'register' : 'identify',
         'popup.btnText': !isRegistered ? '去注册' : '去认证',
         'popup.title': !isRegistered ? '您还没有注册' : '您还没有身份认证',
       });
@@ -402,14 +393,13 @@ Page({
     });
   },
   onConfirm() {
-
     try {
-        if (app.globalData.isRegistered && app.globalData.userInfo.photoReviewStatus === 0) {
+      if (app.globalData.isRegistered && app.globalData.userInfo.photoReviewStatus === 0) {
 
-          NavigateDebounce.navigateTo('/packageA/pages/profile-verification/profile-verification');
-        } else {
-          NavigateDebounce.navigateTo('/pages/welcome/welcome');
-        }
+        NavigateDebounce.navigateTo('/packageA/pages/profile-verification/profile-verification');
+      } else {
+        NavigateDebounce.navigateTo('/pages/welcome/welcome');
+      }
     } catch (error: any) {
       console.error('跳转失败:', error);
       console.error('错误详情:', {
@@ -447,4 +437,13 @@ Page({
       imageUrl: detail.mainCoverImage || '', // 活动主图作为分享图片
     };
   },
+  onBack() {
+    // 检查页面栈长度，如果大于1则返回上一页，否则跳转到活动列表页
+    const pages = getCurrentPages();
+    if (pages.length > 1) {
+      wx.navigateBack();
+    } else {
+      navigateHelper.goEvents();
+    }
+  }
 });

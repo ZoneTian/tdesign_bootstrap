@@ -178,7 +178,6 @@ Page({
               };
             }
           });
-          console.log(photoData, 'zone');
 
           this.setData(photoData);
         }

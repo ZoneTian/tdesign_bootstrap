@@ -39,9 +39,14 @@ Page({
                 app.globalData.hasLogin = true;
                 app.globalData.isRegistered = registeredFlag;
                 app.globalData.userInfo = formattedUserInfo; // 保存用户详细信息
+                if (registeredFlag) {
+                  this.goHome()
+                } else {
+                  return navigateHelper.goPersonalInfo();
+                }
 
               }
-              this.goHome()
+
             }
 
           } catch (err) {

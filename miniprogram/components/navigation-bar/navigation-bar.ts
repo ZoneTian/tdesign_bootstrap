@@ -57,6 +57,16 @@ Component({
   data: {
     displayStyle: '',
   },
+  pageLifetimes: {
+    show() {
+      if (!this.data.homeButton && this.isSinglePageInStack()) {
+        this.setData({
+          homeButton: true,
+          // back: false
+        })
+      }
+    }
+  },
   lifetimes: {
     attached() {
       const rect = wx.getMenuButtonBoundingClientRect();
@@ -95,12 +105,35 @@ Component({
     },
     back() {
       const data = this.data;
+      // 先触发自定义事件，确保页面能接收到通知
+      this.triggerEvent('back', { delta: data.delta }, {});
+      // 然后再执行页面返回操作
       if (data.delta) {
         wx.navigateBack({
           delta: data.delta,
         });
       }
-      this.triggerEvent('back', { delta: data.delta }, {});
+    },
+    /**
+     * 返回首页
+     */
+    home() {
+      // 触发自定义事件
+      this.triggerEvent('home', {}, {});
+      // 执行返回首页操作
+      wx.switchTab({
+        url: '/pages/index/index'
+      });
+    },
+    /**
+     * 判断当前页面栈是否只有一个页面
+     * @returns {boolean} 返回true表示当前页面栈只有一个页面，false表示有多个页面
+     */
+    isSinglePageInStack() {
+      // 获取当前页面栈的实例，以数组形式按栈的顺序给出，第一个元素为首页，最后一个元素为当前页面
+      const pages = getCurrentPages();
+      // 页面栈长度为1表示当前只有一个页面
+      return pages.length === 1;
     },
   },
 });

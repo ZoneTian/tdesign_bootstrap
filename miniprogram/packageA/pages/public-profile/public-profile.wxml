@@ -33,7 +33,7 @@
         <view class="profile-card__name">{{userDetail.nickName}}</view>
         <view class="profile-card__badges">
           <view class="profile-card__badge profile-card__badge--verified"  wx-if="{{userDetail.photoReviewStatus}}">已认证<image src="https://qiniustatic.womenshike.top/icon_tags_approved.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" /></view>
-          <view class="profile-card__badge profile-card__badge--education" wx-if="{{userDetail.isEducationVerified}}">学历认证<image src="https://qiniustatic.womenshike.top/icon_tags_approved.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" /></view>
+        <!--  <view class="profile-card__badge profile-card__badge--education" wx-if="{{userDetail.isEducationVerified}}">学历认证<image src="https://qiniustatic.womenshike.top/icon_tags_approved.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" /></view> -->
         </view>
       </view>
 

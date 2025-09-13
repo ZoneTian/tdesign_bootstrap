@@ -10,8 +10,8 @@ import {
 } from '../../utils/api';
 import { getUserID } from '../../utils/auth';
 import { DebounceHelper, NavigateDebounce } from '../../utils/debounce';
-import { setPopupShown, getPopupShown } from '../../utils/storage';
 import { POPUP_SHOWN_KEY } from '../../utils/constants';
+import { subscribeMessage } from '../../utils/subscribe';
 
 const app = getApp<
   IAppOption & {
@@ -188,9 +188,6 @@ Page({
   onClose() {
     this.setData({ showVisible: false, });
   },
-  onConfirm() {
-
-  },
 
   onEventInfo(e: WechatMiniprogram.CustomEvent<{
     currentTarget: any;
@@ -245,7 +242,7 @@ Page({
     const that = this
     if (!app.globalData.presentPopupShow) {
       this.setData({
-        'popup.title': '您已经获得 1 次免费 \n 参加活动的机会',
+        'popup.title': '您可以获得 1 次免费 \n 参加活动的机会',
         'popup.subtitle': '只被需2人关注即可免费获得',
         'popup.btnText': '知道了',
         'popup.icon': 'present',
@@ -388,21 +385,6 @@ Page({
       }, 10000); // 10秒后超时
     }
   },
-  // 处理订阅消息回调
-  onSubscribeMessage(e: WechatMiniprogram.CustomEvent) {
-    console.log('订阅消息结果:', e.detail);
-    // 可以根据订阅结果进行相应处理
-    if (e.detail.errMsg === 'requestSubscribeMessage:ok') {
-      wx.showToast({
-        title: '订阅成功',
-        icon: 'success',
-      });
-    }
-    // 订阅完成后关闭弹窗
-    setTimeout(() => {
-      this.onClose();
-    }, 1500);
-  },
 
   onReject(e: WechatMiniprogram.CustomEvent) {
     DebounceHelper.execute(
@@ -438,26 +420,17 @@ Page({
       300,
     );
   },
-  onSubscribe() {
-    // if (this.data.popup.icon === 'present') {
-    //   wx.requestSubscribeMessage({
-    //     tmplIds: ['ywtnkrvlOYD-OFZ_97qTq4jZ6tHQhfBYWxVI6Z9yOss'],
-    //     success: (res) => {
-    //       console.log('订阅成功:', res);
-    //     },
-    //     fail: (err) => {
-    //       console.error('订阅失败:', err);
-    //     }
-    //   });
-    //   this.onClose()
-    //   return;
-    // }
+  async onSubscribe() {
+    if (this.data.popup.icon === 'present') {
+      await subscribeMessage(['ywtnkrvlOYD-OFZ_97qTq4jZ6tHQhfBYWxVI6Z9yOss']);
+      this.onClose()
+      return;
+    }
     DebounceHelper.execute(
       'onConfirm',
       () => {
         this.onClose()
         if (app.globalData.isRegistered && app.globalData.userInfo.photoReviewStatus === 0) {
-
           NavigateDebounce.navigateTo('/packageA/pages/profile-verification/profile-verification');
         } else {
           NavigateDebounce.navigateTo('/pages/welcome/welcome');

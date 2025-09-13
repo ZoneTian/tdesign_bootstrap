@@ -59,8 +59,7 @@ export function getSchoolList(): string | null {
 export function setPopupShown(shown: boolean): void {
   try {
     wx.setStorageSync(POPUP_SHOWN_KEY, shown);
-   console.log('zone ');
-   
+
   } catch (e) {
     console.error('保存弹窗显示状态失败：', e);
   }

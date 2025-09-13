@@ -333,13 +333,13 @@ Page({
       return false;
     }
 
-    if (!form.userMbti) {
-      wx.showToast({
-        title: '请选择MBTI',
-        icon: 'none',
-      });
-      return false;
-    }
+    // if (!form.userMbti) {
+    //   wx.showToast({
+    //     title: '请选择MBTI',
+    //     icon: 'none',
+    //   });
+    //   return false;
+    // }
 
     if (!form.hometown) {
       wx.showToast({

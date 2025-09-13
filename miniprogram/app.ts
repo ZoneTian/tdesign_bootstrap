@@ -10,23 +10,23 @@ export const loginPromise = new Promise<void>((resolve) => {
 });
 
 interface userInfoData {
-    id: number; // 主键id
-    customerSerial: string; // 用户编码
-    school: string; // 学校
-    academics: string; // 学历/学术水平
-    registrationTime: string; // 注册时间
-    academicReviewStatus: number; // 学历认证状态: 0.待审核 1.已通过 2.未通过
-    photoReviewStatus: number; // 照片审核状态: 0.待审核 1.已通过 2.未通过
-    openId: string; // 用户唯一标识
-    unionId: string; // 用户在开放平台的唯一标识符
-    nickName: string; // 用户昵称
-    avatarUrl: string; // 用户头像图片URL
-    gender: 0 | 1 | 2; // 用户性别 0未知 1男性 2女性
-    city: string; // 用户所在城市
-    province: string; // 用户所在省份
-    country: string; // 用户所在国家
-    language: string; // 语言
-    telephone: string; // 手机号
+  id: number; // 主键id
+  customerSerial: string; // 用户编码
+  school: string; // 学校
+  academics: string; // 学历/学术水平
+  registrationTime: string; // 注册时间
+  academicReviewStatus: number; // 学历认证状态: 0.待审核 1.已通过 2.未通过
+  photoReviewStatus: number; // 照片审核状态: 0.待审核 1.已通过 2.未通过
+  openId: string; // 用户唯一标识
+  unionId: string; // 用户在开放平台的唯一标识符
+  nickName: string; // 用户昵称
+  avatarUrl: string; // 用户头像图片URL
+  gender: 0 | 1 | 2; // 用户性别 0未知 1男性 2女性
+  city: string; // 用户所在城市
+  province: string; // 用户所在省份
+  country: string; // 用户所在国家
+  language: string; // 语言
+  telephone: string; // 手机号
 
 }
 
@@ -67,7 +67,7 @@ App<IAppOption & { globalData: GlobalData }>({
   async onLaunch() {
     // 检查版本更新
     const updateManager = wx.getUpdateManager();
-    
+
     updateManager.onCheckForUpdate((res) => {
       if (res.hasUpdate) {
         updateManager.onUpdateReady(() => {
@@ -81,7 +81,7 @@ App<IAppOption & { globalData: GlobalData }>({
             }
           });
         });
-        
+
         updateManager.onUpdateFailed(() => {
           wx.showToast({
             title: '新版本下载失败',
@@ -97,16 +97,14 @@ App<IAppOption & { globalData: GlobalData }>({
     wx.setStorageSync("logs", logs);
 
     // 登录
-   await  wx.login({
+    await wx.login({
       success: async (res) => {
         console.log('登录成功，获取到 code:', res.code);
         // 发送 res.code 到后台换取 openId, sessionKey, unionId
         if (res.code) {
-        await postLogin({
+          await postLogin({
             code: res.code
           }).then(loginRes => {
-            console.log('zone');
-            
             if (loginRes.code === 0 && loginRes.data) {
               // 保存登录信息
               const { token, userInfo, registeredFlag } = loginRes.data;
@@ -114,14 +112,14 @@ App<IAppOption & { globalData: GlobalData }>({
                 setToken(token);
                 setOpenID(userInfo.openId);
                 setUserID(userInfo.id);
-                
+
                 // 确保gender和language类型正确
                 const formattedUserInfo = {
                   ...userInfo,
                   gender: userInfo.gender as 0 | 1 | 2,
                   language: userInfo.language as "en" | "zh_CN" | "zh_TW"
                 };
-                
+
                 this.globalData.hasLogin = true;
                 this.globalData.isRegistered = registeredFlag;
                 this.globalData.userInfo = formattedUserInfo; // 保存用户详细信息
@@ -129,11 +127,11 @@ App<IAppOption & { globalData: GlobalData }>({
               }
               console.log('登录成功，已获取用户信息和 openid');
               console.log('用户注册状态:', registeredFlag ? '已注册' : '未注册');
-              
+
               // 如果用户未注册，设置 showVisible 为 true
-               this.globalData.showVisible = !registeredFlag;
-               console.log('showVisible:', this.globalData.showVisible);
-              
+              this.globalData.showVisible = !registeredFlag;
+              console.log('showVisible:', this.globalData.showVisible);
+
               // 登录完成，解析Promise
               loginResolve();
             } else {

@@ -1,7 +1,6 @@
 import { eventImages } from './events.config';
-import { ActivityMpListVo, PageInfoActivityMpListVo } from '../../utils/api';
+import { ActivityMpListVo } from '../../utils/api';
 import { loadActivityList } from '../../utils/activityHelper';
-import { DebounceHelper } from '../../utils/debounce';
 
 // 定义活动状态类型
 type applyStatus = {

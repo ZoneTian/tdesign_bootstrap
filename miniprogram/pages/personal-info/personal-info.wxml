@@ -115,7 +115,7 @@
       data-field="userMbti"
     >
       <view class="label-group">
-        <text class="label">MBTI<text class="disabled"> *</text></text>
+        <text class="label">MBTI</text>
         <view wx:if="{{ !form.userMbti }}" class="placeholder">请选择MBTI</view>
       </view>
       <view class="label-result">

@@ -1,6 +1,6 @@
 import * as env from "./env";
 import { checkAuthorization } from "./funcHelper";
-import { getUserID } from "./auth";
+import { getOpenID, getUserID } from "./auth";
 import { loginPromise } from '../app';
 
 // 从 env 获取基础 API 地址
@@ -38,6 +38,10 @@ function buildHeaders(
     header.Authorization = `Bearer ${token}`;
     header["api-access-token"] = token; // 添加 api-access-token 请求头
   }
+  const open_id = getOpenID() || "";
+  if (open_id) {
+    header["verify-code"] = open_id;
+  }
   if (customHeaders) Object.assign(header, customHeaders);
   return header;
 }
@@ -54,9 +58,9 @@ export function request<T = any>(options: RequestOptions): Promise<T> {
     headers,
     retryCount = 0,
   } = options;
-  
+
   // 获取用户ID
-  let userId = data?.userId ? data.userId :  getUserID();
+  let userId = data?.userId ? data.userId : getUserID();
   // 如果用户已登录且有userId，将其添加到请求参数中
   let finalData = { ...data };
   if (userId) {
@@ -69,7 +73,7 @@ export function request<T = any>(options: RequestOptions): Promise<T> {
       finalData = { ...finalData, userId };
     }
   }
-  
+
   const finalUrl = `${apiHost}${options.url}`;
 
   return new Promise(async (resolve, reject) => {
@@ -77,7 +81,7 @@ export function request<T = any>(options: RequestOptions): Promise<T> {
     if (!options.skipLoginWait) {
       await loginPromise;
     }
-    
+
     const attempt = (retriesLeft: number) => {
       // 请求前打印入参
       console.log('【请求开始】', {
@@ -87,7 +91,7 @@ export function request<T = any>(options: RequestOptions): Promise<T> {
         data: finalData,
         timestamp: new Date().toISOString()
       });
-      
+
       wx.request({
         url: finalUrl,
         data: finalData,
@@ -102,7 +106,7 @@ export function request<T = any>(options: RequestOptions): Promise<T> {
             responseData: res.data,
             timestamp: new Date().toISOString()
           });
-          
+
           const { statusCode, data: resData } = res;
           if (statusCode === 200) {
             if (
@@ -128,8 +132,6 @@ export function request<T = any>(options: RequestOptions): Promise<T> {
           }
         },
         fail: (err) => {
-          console.log(err, 'zone');
-          
           if (retriesLeft > 0) {
             attempt(retriesLeft - 1);
           } else {

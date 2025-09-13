@@ -1,4 +1,4 @@
-<navigation-bar back="{{true}}" color="black">
+<navigation-bar back="{{true}}" color="black" bind:back="onBack">
   <view slot="center" class="slot-title">活动详情</view>
 </navigation-bar>
 
@@ -34,16 +34,16 @@
     </view>
   </view>
 
-  <view class="event-info__participants" wx:if="{{userList.length > 0}}">
+  <view class="event-info__participants" wx:if="{{userList.length > 0 && eventInfo.detail.applyCount > 20}}">
     <view class="event-info__avatar-list">
-      <block wx:for="{{userList}}" wx:key="userId" wx:for-item="item" wx:for-index="index">
+      <block wx:for="{{userAvatarList}}" wx:key="userId" wx:for-item="item" wx:for-index="index">
         <image class="event-info__avatar" mode="aspectFill" src="{{item.avatarUrl || defaultAvatar}}" />
       </block>
     </view>
      <view class="event-info__avatar-more" bindtap="goAttendeeList">查看全部</view>
   </view>
 
-  <view class="event-info__conditions">
+  <view class="event-info__conditions" wx-if="{{eventInfo.detail.applyCount > 20}}" style="{{ eventInfo.detail.applyCount > 20 ? '': 'display:none'}}">
     已有 <text class="event-info__number">{{eventInfo.detail.applyCount}}</text> 人报名
     <!--仅剩 <text class="event-info__number event-info__number--warn">23</text> 个名额 -->
   </view>
@@ -101,7 +101,7 @@
       </view>
       <!-- 根据报名状态显示不同的按钮 -->
       <view class="event-info__action-join {{registrationStatus.isBeforeRegistration || registrationStatus.isAfterRegistration ? 'disabled' : ''}}" bind:tap="onPayment">
-        {{registrationStatus.statusText || '上车（¥' + eventInfo.detail.activityPrice + '）'}}
+        {{registrationStatus.statusText || "立刻报名"}}
       </view>
     </view>
   </view>
