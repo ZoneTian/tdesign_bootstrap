@@ -9,6 +9,8 @@ import {
 import { DEFAULT_AVATAR } from '../../../utils/constants';
 import { NavigateDebounce } from '../../../utils/debounce';
 
+
+
 // 获取全局应用实例
 const app = getApp<
   IAppOption & {
@@ -331,14 +333,17 @@ Page({
 
 
   async onPayment() {
-    if (!app.globalData.isRegistered) {
+    if (this.data.registrationStatus.isBeforeRegistration || this.data.registrationStatus.isAfterRegistration) {
+      return;
+    }
+    if (!app.globalData.isRegistered || app.globalData.userInfo.photoReviewStatus === 0) {
       const isRegistered = app.globalData.isRegistered;
       // 未授权
       this.setData({
         showVisible: true,
         'popup.icon': !app.globalData.isRegistered ? 'register' : 'identify',
         'popup.btnText': !isRegistered ? '去注册' : '去认证',
-        'popup.title': !isRegistered ? '您还没有注册' : '您还没有身份认证',
+        'popup.title': !isRegistered ? '您还没有注册' : '您还没有展示社交照片',
       });
       return;
     }
