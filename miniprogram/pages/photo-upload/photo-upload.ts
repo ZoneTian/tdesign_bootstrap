@@ -23,27 +23,27 @@ Page({
     form: {},
     uploadedImages: [] as string[], // 存储已上传图片的URL
   },
-  async onShow() {},
+  async onShow() { },
   onReciveFile(e: any) {
     this.setData({
       images: e.detail,
     });
   },
-  
+
   // 删除已上传的图片
   onRemoveImage(e: WechatMiniprogram.CustomEvent) {
     const field = e.currentTarget.dataset.field;
     if (!field) return;
-    
+
     const key = `form.${field}`;
-    
+
     this.setData({
       [key]: null
     });
-    
+
     console.log(`已删除${field}图片`);
   },
-  
+
   // 删除笑脸图片（兼容已有的方法）
   onRemoveSmile() {
     this.onRemoveImage({ currentTarget: { dataset: { field: 'smile' } } } as any);
@@ -52,24 +52,47 @@ Page({
     try {
       // 获取所有已上传的图片URL
       const form = this.data.form;
-      const socialImages: string[] = [];
-      
+      // const socialImages: string[] = [];
+
+      // // 收集所有已上传图片的URL
+      // Object.keys(form).forEach(key => {
+      //   if (form[key] && form[key].url) {
+      //     socialImages.push(form[key].url);
+      //   }
+      // });
+
+      // // 验证至少上传一张图片
+      // if (socialImages.length === 0) {
+      //   wx.showToast({
+      //     title: '请至少上传一张图片',
+      //     icon: 'none'
+      //   });
+      //   return;
+      // }
       // 收集所有已上传图片的URL
-      Object.keys(form).forEach(key => {
-        if (form[key] && form[key].url) {
-          socialImages.push(form[key].url);
+      const socialImages: { socializingImgUrl: string; imgType: number; id?: number, sort: number }[] = [];
+      const photoFields = ['main', 'careful', 'confidence', 'montain', 'life', 'smile'] as const;
+      // 验证至少上传一张图片
+
+      photoFields.forEach((field, index) => {
+        const photoItem = form[field];
+        if (photoItem && typeof photoItem === 'object' && 'url' in photoItem && photoItem.url) {
+          socialImages.push({
+            socializingImgUrl: photoItem.url,
+            imgType: field === 'main' ? 0 : 1,
+            id: 'id' in photoItem ? photoItem.id : undefined,
+            sort: index
+          });
         }
       });
-      
-      // 验证至少上传一张图片
       if (socialImages.length === 0) {
         wx.showToast({
           title: '请至少上传一张图片',
-          icon: 'none'
+          icon: 'none',
         });
         return;
       }
-      
+
       const userId = getUserID();
       if (!userId) {
         wx.showToast({
@@ -78,17 +101,17 @@ Page({
         });
         return;
       }
-      
+
       wx.showLoading({
         title: '正在上传图片...',
         mask: true
       });
-      
+
       // 调用上传社交图片接口
       const res = await uploadSocialImages(Number(userId), socialImages);
-      
+
       wx.hideLoading();
-      
+
       if (res.code === 0) {
         wx.showToast({
           title: '图片上传成功',

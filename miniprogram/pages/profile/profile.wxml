@@ -40,6 +40,9 @@
       <view class="notes-login" bind:tap="goWelcome" wx:if="{{!isRegistered}}">立即注册
         <image src="https://qiniustatic.womenshike.top/icon_arrow_r.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" />
       </view>
+      <view class="notes-login" bind:tap="onEditProfile" wx:if="{{isRegistered}}">编辑信息
+        <image src="https://qiniustatic.womenshike.top/icon_arrow_r.png" mode="aspectFit|aspectFill|widthFix" lazy-load="false" />
+      </view>
 
     </view>
 

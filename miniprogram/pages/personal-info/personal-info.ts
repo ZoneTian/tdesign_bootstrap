@@ -261,7 +261,7 @@ Page({
             });
 
             setTimeout(() => {
-              navigateHelper.goHome();
+              navigateHelper.goPhotoUpload();
             }, 1000);
           } else {
             wx.showToast({

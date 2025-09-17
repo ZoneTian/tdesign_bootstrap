@@ -1,11 +1,10 @@
  <navigation-bar back="{{true}}" color="black"></navigation-bar>
 
 <view class="page-wrapper personal-info">
-<!--
   <view class="processing-group">
     <view class="processing reading"></view>
     <view class="processing"></view>
-  </view> -->
+  </view> 
   <view class="register-form">
 
     <!-- 昵称 -->
