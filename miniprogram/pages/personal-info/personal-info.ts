@@ -1,5 +1,5 @@
 import { postRegister } from '../../utils/api';
-import { getMbtiOptions, getOccupationOptions } from '../../utils/dataSource';
+import { getMbtiOptions, getOccupationOptions, getSchoolOptions } from '../../utils/dataSource';
 import * as navigateHelper from '../../utils/navigateHelper';
 import { getOpenID, setToken, setOpenID, setUserID } from '../../utils/auth';
 import { DebounceHelper } from '../../utils/debounce';
@@ -45,6 +45,7 @@ Page({
       location: null as Option | null,
       occupation: null as Option | null,
       telephone: '',
+      school: null as Option | null
     },
     picker: {
       visible: false,
@@ -62,6 +63,7 @@ Page({
       birthday: null as Option[] | null,
       userMbti: null as Option[] | null,
       occupation: null as Option[] | null,
+      school: null as Option[] | null,
       income: null as Option[] | null,
     } as PickerOptionsMap,
   },
@@ -198,13 +200,16 @@ Page({
           wx.showLoading({ title: '提交中...' });
 
           const { form } = this.data;
-          const openid = getOpenID();
 
-          if (!openid) {
-            wx.login();
+          // 确保先调用login获取code
+          const data = await wx.login();
+          if (!data.code) {
+            wx.showToast({ title: '登录失败，请重试', icon: 'none' });
+            wx.hideLoading();
+            return;
           }
 
-          const data = await wx.login();
+          const openid = getOpenID();
 
           const heightValue = form?.userHeight?.label
             ? String(form.userHeight.label).replace('cm', '')
@@ -214,14 +219,15 @@ Page({
             openId: openid,
             code: data.code,
             nickName: form.nickName,
-            gender: form.gender?.value?.[0] || 0,
+            gender: form.gender?.value || 0,  // 修正gender值的处理方式
             userBirthday: form.birthday?.label || '',
             userHeight: heightValue,
             userMbti: String(form.userMbti?.label || ''),
             country: 'CN',
-            occupation: String(form.occupation?.label || ''),
+            school: String(form.school?.label || ''),  // 添加学校字段 因form中无school字段，暂时设置为空字符串，需先在form类定义中添加school字段
             language: 'zh_CN',
             telephone: form.telephone,
+            occupation: String(form.occupation?.label || ''),  // 添加职业字段 因form中无occupation字段，暂时设置为空字符串，需先在form类定义中添加occupation字段
           };
 
           if (form.hometown) {
@@ -366,6 +372,7 @@ Page({
     }
 
 
+
     return true;
   },
 
@@ -413,9 +420,18 @@ Page({
     });
   },
 
+  async initSchoolOptions() {
+    // 使用公共数据源中的学校选项
+    const schoolOptions = getSchoolOptions();
+    this.setData({
+      'pickerOptionsMap.school': schoolOptions,
+    });
+  },
+
   async onShow() {
     await this.initHeightOptions();
     await this.initMbtiOptions();
     await this.initCareerOptions();
+    await this.initSchoolOptions();
   },
 });

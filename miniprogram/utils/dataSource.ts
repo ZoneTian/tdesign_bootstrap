@@ -54,7 +54,7 @@ export const mbtiList = [
 export const occupationCategories = {
   "常见职业范围": {
     "专业技术类": [
-      "学生","其他","医生", "护士", "药剂师", "营养师", "心理咨询师",
+      "学生", "其他", "医生", "护士", "药剂师", "营养师", "心理咨询师",
       "机械工程师", "电气工程师", "软件工程师", "数据分析师",
       "科学家", "研究员", "大学教师",
       "律师", "法官", "法律顾问",
@@ -91,14 +91,14 @@ export const occupationCategories = {
 // 将嵌套的职业数据转换为扁平的列表
 export function getOccupationList(): string[] {
   const occupationList: string[] = [];
-  
+
   for (const category in occupationCategories["常见职业范围"]) {
-    const jobs = occupationCategories["常见职业范围"][category];
+    const jobs = occupationCategories["常见职业范围"][category as keyof (typeof occupationCategories)["常见职业范围"]];
     jobs.forEach(job => {
       occupationList.push(job);
     });
   }
-  
+
   return occupationList;
 }
 

@@ -241,6 +241,21 @@ Page({
     // 检查弹窗是否已经显示过
     const that = this
     if (!app.globalData.presentPopupShow) {
+      if (app.globalData.userInfo.photoReviewStatus !== 1) {
+        this.setData({
+          'popup.title': '您可以获得 1 次免费 \n 参加活动的机会',
+          'popup.subtitle': '只需上传社交照片，并通过人脸认证',
+          'popup.btnText': '知道了',
+          'popup.icon': 'present',
+        }, () => {
+          that.setData({
+            showVisible: true,
+          });
+          // 设置弹窗已显示状态
+          app.globalData.presentPopupShow = true
+        });
+        return;
+      }
       this.setData({
         'popup.title': '您可以获得 1 次免费 \n 参加活动的机会',
         'popup.subtitle': '只被需2人关注即可免费获得',

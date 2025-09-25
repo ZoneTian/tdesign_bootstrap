@@ -367,6 +367,24 @@
         />
       </view>
     </view>
+    <view 
+      class="form-item" 
+      bindtap="onHandlePicker" 
+      data-field="school"
+    >
+      <view class="label-group">
+        <text class="label">学校</text>
+        <view wx:if="{{ !form.school }}" class="placeholder">请选择学校</view>
+      </view>
+      <view class="label-result">
+        <input 
+          type="text" 
+          class="form-input" 
+          value="{{form.school && form.school.label}}"
+          disabled
+        />
+      </view>
+    </view>
 
 
   </view>
