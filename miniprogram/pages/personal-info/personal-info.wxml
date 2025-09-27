@@ -1,4 +1,4 @@
- <navigation-bar back="{{true}}" color="black"></navigation-bar>
+<navigation-bar back="{{true}}" color="black"></navigation-bar>
 
 <view class="page-wrapper personal-info">
   <view class="processing-group">
@@ -186,19 +186,19 @@
     </view>
     <view 
       class="form-item" 
-      bindtap="onHandlePicker" 
       data-field="school"
     >
       <view class="label-group">
         <text class="label">学校</text>
-        <view wx:if="{{ !form.school }}" class="placeholder">请选择学校</view>
+        <view wx:if="{{ !form.school }}" class="placeholder">请输入学校</view>
       </view>
-      <view class="label-result">
+      <view class="label-result-input">
         <input 
           type="text" 
           class="form-input" 
-          value="{{form.school && form.school.label}}"
-          disabled
+          value="{{form.school}}"
+          bindinput="onSchoolInput"
+          placeholder="请输入学校"
         />
       </view>
     </view>

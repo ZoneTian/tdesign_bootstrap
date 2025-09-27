@@ -304,7 +304,7 @@
         <input 
           type="text" 
           class="form-input" 
-          value="{{form.userMbti && form.userMbti.label}}"
+          value="{{ form.userMbti.label || form.userMbti}}"
           placeholder="请输入MBTI"
           bindinput="onMbtiInput"
         />
@@ -362,26 +362,26 @@
         <input 
           type="text" 
           class="form-input" 
-          value="{{form.occupation && form.occupation.label}}"
+          value="{{form.occupation.label || form.occupation}}"
           disabled
         />
       </view>
     </view>
     <view 
       class="form-item" 
-      bindtap="onHandlePicker" 
       data-field="school"
     >
       <view class="label-group">
         <text class="label">学校</text>
-        <view wx:if="{{ !form.school }}" class="placeholder">请选择学校</view>
+        <view wx:if="{{ !form.school }}" class="placeholder">请输入学校</view>
       </view>
-      <view class="label-result">
+      <view class="label-result-input">
         <input 
           type="text" 
           class="form-input" 
-          value="{{form.school && form.school.label}}"
-          disabled
+          value="{{form.school}}"
+          bindinput="onSchoolInput"
+          placeholder="请输入学校"
         />
       </view>
     </view>

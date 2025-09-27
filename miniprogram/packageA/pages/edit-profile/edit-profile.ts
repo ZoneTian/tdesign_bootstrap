@@ -7,7 +7,7 @@ import {
   uploadSocialImages,
   onRemoveImage,
 } from '../../../utils/api';
-import { getMbtiOptions, getOccupationOptions, getSchoolOptions } from '../../../utils/dataSource';
+import { getMbtiOptions, getOccupationOptions } from '../../../utils/dataSource';
 import { compressImage, uploadFileWithProgress } from '../../../utils/file';
 import { getUserID } from '../../../utils/auth';
 import { DebounceHelper, NavigateDebounce } from '../../../utils/debounce';
@@ -37,7 +37,7 @@ Page({
       hometown: null as Option | null,
       location: null as Option | null,
       occupation: null as Option | null,
-      school: null as Option | null,
+      school: '',
       // 隐私信息
       selfDescription: '',
       friendshipTend: '',
@@ -221,8 +221,12 @@ Page({
     // 初始化MBTI（直接使用字符串）
     const userMbti = userDetail.userMbti || '';
 
+    // 初始化学校（直接使用字符串）
+    const school = userDetail.school || '';
+
     // 初始化职业
     let occupation = userDetail.occupation;
+    console.log(occupation, "zone");
 
     // 初始化生日
     let birthday = null;
@@ -288,16 +292,16 @@ Page({
     this.setData({
       'form.nickName': nickName,
       'form.gender': gender,
+      'form.userHeight': userHeight,
+      'form.userMbti': userMbti,
+      'form.occupation': occupation,
+      'form.school': school,
+      'form.birthday': birthday,
       'form.hometown': hometown,
       'form.location': location,
-      'form.userHeight': userHeight,
-      'form.userMbti.label': userMbti,
-      'form.birthday': birthday,
-      'form.occupation.label': occupation,
       'form.selfDescription': userDetail.selfDescription,
       'form.friendshipTend': userDetail.friendshipTend,
       'form.telephone': userDetail.telephone,
-      'form.school.label': userDetail.school,
     });
   },
 
@@ -410,6 +414,13 @@ Page({
 
   onMbtiInput(event: WechatMiniprogram.CustomEvent<{ value: string }>) {
     this.setData({ 'form.userMbti': event.detail.value });
+  },
+
+  // 学校输入处理
+  onSchoolInput(e: WechatMiniprogram.CustomEvent<{ value: string }>) {
+    this.setData({
+      'form.school': e.detail.value
+    });
   },
 
   onOccupationInput(event: WechatMiniprogram.CustomEvent<{ value: string }>) {
@@ -624,12 +635,8 @@ Page({
 
       // 添加MBTI
       if (form.userMbti) {
-        // 安全地处理userMbti类型
-        updateParams.userMbti = typeof form.userMbti === 'string'
-          ? form.userMbti
-          : (form.userMbti && typeof form.userMbti === 'object' && 'label' in form.userMbti)
-            ? String(form.userMbti.label || '')
-            : '';
+        // 直接使用字符串值
+        updateParams.userMbti = form.userMbti;
       }
 
       // 添加职业
@@ -637,6 +644,11 @@ Page({
         updateParams.occupation = (form.occupation && typeof form.occupation === 'object' && 'label' in form.occupation)
           ? String(form.occupation.label || '')
           : String(form.occupation || '');
+      }
+
+      // 添加学校
+      if (form.school) {
+        updateParams.school = form.school;
       }
 
       // 添加其他字段（如果有变化）
@@ -720,11 +732,7 @@ Page({
             userHeight: form.userHeight?.label
               ? String(form.userHeight.label).replace('cm', '')
               : undefined,
-            userMbti: typeof form.userMbti === 'string'
-              ? form.userMbti
-              : (form.userMbti && typeof form.userMbti === 'object' && 'label' in form.userMbti)
-                ? String(form.userMbti.label || '')
-                : '',
+            userMbti: form.userMbti || '',
             occupation: (form.occupation && typeof form.occupation === 'object' && 'label' in form.occupation)
               ? String(form.occupation.label || '')
               : String(form.occupation || ''),
@@ -743,9 +751,7 @@ Page({
             presentCity: form.location ? form.location.value.toString().split('-')[1] : undefined,
             selfDescription: form.selfDescription,
             friendshipTend: form.friendshipTend,
-            school: (form.school && typeof form.school === 'object' && 'label' in form.school)
-              ? String(form.school.label || '')
-              : String(form.school || ''),
+            school: form.school || '',
           });
         }
 
@@ -844,18 +850,9 @@ Page({
     });
   },
 
-  async initSchoolOptions() {
-    // 使用公共数据源中的学校选项
-    const schoolOptions = getSchoolOptions();
-    this.setData({
-      'pickerOptionsMap.school': schoolOptions,
-    });
-  },
-
   async onShow() {
     await this.initHeightOptions();
     await this.initMbtiOptions();
     await this.initCareerOptions();
-    await this.initSchoolOptions();
   },
 });

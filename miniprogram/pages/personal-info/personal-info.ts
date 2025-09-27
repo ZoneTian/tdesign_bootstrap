@@ -45,7 +45,7 @@ Page({
       location: null as Option | null,
       occupation: null as Option | null,
       telephone: '',
-      school: null as Option | null
+      school: ''
     },
     picker: {
       visible: false,
@@ -224,7 +224,7 @@ Page({
             userHeight: heightValue,
             userMbti: String(form.userMbti?.label || ''),
             country: 'CN',
-            school: String(form.school?.label || ''),  // 添加学校字段 因form中无school字段，暂时设置为空字符串，需先在form类定义中添加school字段
+            school: form.school || '',  // 学校字段现在是直接输入的字符串
             language: 'zh_CN',
             telephone: form.telephone,
             occupation: String(form.occupation?.label || ''),  // 添加职业字段 因form中无occupation字段，暂时设置为空字符串，需先在form类定义中添加occupation字段
@@ -376,6 +376,13 @@ Page({
     return true;
   },
 
+  // 学校输入处理
+  onSchoolInput(e: WechatMiniprogram.CustomEvent<{ value: string }>) {
+    this.setData({
+      'form.school': e.detail.value
+    });
+  },
+
   onLoad() {
     this.initFormData();
   },
@@ -432,6 +439,5 @@ Page({
     await this.initHeightOptions();
     await this.initMbtiOptions();
     await this.initCareerOptions();
-    await this.initSchoolOptions();
   },
 });
