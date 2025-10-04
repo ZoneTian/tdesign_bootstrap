@@ -48,7 +48,8 @@ Page({
       montain: null as any,
       life: null as any,
       smile: null as any,
-      telephone: ''
+      telephone: '',
+      wechatAccount: ''
     },
     // picker-overlay 配置
     picker: {
@@ -285,7 +286,7 @@ Page({
 
     // 现居地也使用 province 和 city
     if (userDetail.province && userDetail.city) {
-      const locationLabel = `${userDetail.province}-${userDetail.city}`;
+      const locationLabel = `${userDetail.presentProvince || ''}-${userDetail.presentCity || ''}`;
       location = { label: locationLabel, value: locationLabel };
     }
 
@@ -302,6 +303,8 @@ Page({
       'form.selfDescription': userDetail.selfDescription,
       'form.friendshipTend': userDetail.friendshipTend,
       'form.telephone': userDetail.telephone,
+      'form.wechatAccount': userDetail.wechatAccount,
+
     });
   },
 
@@ -420,6 +423,12 @@ Page({
   onSchoolInput(e: WechatMiniprogram.CustomEvent<{ value: string }>) {
     this.setData({
       'form.school': e.detail.value
+    });
+  },
+
+  onWechatInput(e: WechatMiniprogram.CustomEvent<{ value: string }>) {
+    this.setData({
+      'form.wechatAccount': e.detail.value
     });
   },
 
@@ -603,6 +612,31 @@ Page({
       return;
     }
 
+    const { form } = this.data;
+
+    // 检查用户是否填写了微信号
+    if (form.wechatAccount && form.wechatAccount.trim() !== '') {
+      // 如果用户已经填写了微信号，则直接提交
+      await this.submitProfileForm();
+    } else {
+      // 只有当用户没有填写微信号时，才显示二次确认弹窗
+      wx.showModal({
+        title: '确认提交',
+        content: '不填写微信号无法报名活动，确认提交个人资料吗？',
+        showCancel: true,
+        cancelText: '取消',
+        confirmText: '确认',
+        success: async (res) => {
+          if (res.confirm) {
+            await this.submitProfileForm();
+          }
+        }
+      });
+    }
+  },
+
+  // 提交个人资料表单
+  async submitProfileForm() {
     try {
       wx.showLoading({ title: '保存中...' });
 
@@ -620,6 +654,8 @@ Page({
       const updateParams: UpdateUserInfoOptions = {
         userId: userDetail.id,
         nickName: form.nickName,
+        // 添加微信号
+        wechatAccount: form.wechatAccount
       };
 
       // 添加生日
@@ -752,6 +788,7 @@ Page({
             selfDescription: form.selfDescription,
             friendshipTend: form.friendshipTend,
             school: form.school || '',
+            wechatAccount: form.wechatAccount || ''
           });
         }
 

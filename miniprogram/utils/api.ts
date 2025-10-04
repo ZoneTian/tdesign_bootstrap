@@ -504,6 +504,9 @@ export type WeChatUserDetailVo = {
   academicReviewStatus: number;
   photoReviewStatus: number;
   telephone: string;
+  presentProvince: string;
+  presentCity: string;
+  wechatAccount: string;
 };
 
 // 获取用户详情

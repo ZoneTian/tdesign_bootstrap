@@ -1,0 +1,33 @@
+{
+  "setting": {
+    "es6": true,
+    "postcss": false,
+    "minified": true,
+    "uglifyFileName": true,
+    "enhance": true,
+    "packNpmRelationList": [],
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    },
+    "useCompilerPlugins": false,
+    "minifyWXML": true,
+    "condition": true,
+    "packNpmManually": true,
+    "packNpmRelationList": [
+      {
+        "packageJsonPath": "../package.json",
+        "miniprogramNpmDistDir": "../node_modules/"
+      }
+    ]
+  },
+  "compileType": "miniprogram",
+  "simulatorPluginLibVersion": {},
+  "packOptions": {
+    "ignore": [],
+    "include": []
+  },
+  "appid": "wxb17a84fda3f9ca52",
+  "editorSetting": {}
+}

@@ -1,0 +1,22 @@
+{
+  "libVersion": "3.10.2",
+  "projectname": "miniprogram",
+  "setting": {
+    "urlCheck": false,
+    "coverView": true,
+    "lazyloadPlaceholderEnable": false,
+    "skylineRenderEnable": false,
+    "preloadBackgroundData": false,
+    "autoAudits": false,
+    "showShadowRootInWxmlPanel": true,
+    "compileHotReLoad": true,
+    "bigPackageSizeSupport": true,
+    "packNpmManually": true,
+    "packNpmRelationList": [
+      {
+        "packageJsonPath": "../package.json",
+        "miniprogramNpmDistDir": "../node_modules/"
+      }
+    ]
+  }
+}

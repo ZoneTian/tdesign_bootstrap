@@ -202,6 +202,26 @@
         />
       </view>
     </view>
+
+    <!-- 微信号 -->
+    <view 
+      class="form-item" 
+      data-field="wechatAccount"
+    >
+      <view class="label-group">
+        <text class="label">微信号</text>
+        <view wx:if="{{ !form.wechatAccount }}" class="placeholder">请输入微信号</view>
+      </view>
+      <view class="label-result-input">
+        <input 
+          type="text" 
+          class="form-input" 
+          value="{{form.wechatAccount}}"
+          bindinput="onWechatInput"
+          placeholder="请输入微信号"
+        />
+      </view>
+    </view>
     
 
   </view>

@@ -15,7 +15,7 @@ import { NavigateDebounce } from '../../../utils/debounce';
 const app = getApp<
   IAppOption & {
     globalData: {
-      userInfo: WechatMiniprogram.UserInfo | null;
+      userInfo: any | null;
       hasLogin: boolean;
       isRegistered: boolean;
       showVisible: boolean;
@@ -336,6 +336,7 @@ Page({
     if (this.data.registrationStatus.isBeforeRegistration || this.data.registrationStatus.isAfterRegistration) {
       return;
     }
+
     if (!app.globalData.isRegistered || app.globalData.userInfo.photoReviewStatus === 0) {
       const isRegistered = app.globalData.isRegistered;
       // 未授权
@@ -347,7 +348,25 @@ Page({
       });
       return;
     }
-
+    // 增加对于微信号的判断
+    if (!app.globalData.userInfo.wechatAccount) {
+      wx.showModal({
+        title: '提示',
+        content: '您尚未填写微信号，填写后方可报名',
+        showCancel: true,
+        confirmText: '去填写',
+        success: (res) => {
+          if (res.confirm) {
+            // 用户点击了直接报名
+            navigateHelper.goEditProfile();
+          }
+        },
+        fail: (err) => {
+          return;
+        },
+      });
+      return
+    }
     // 用户已注册，调用注册活动接口
     const { eventId } = this.data;
     if (!eventId) {

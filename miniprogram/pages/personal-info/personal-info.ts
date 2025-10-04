@@ -45,7 +45,8 @@ Page({
       location: null as Option | null,
       occupation: null as Option | null,
       telephone: '',
-      school: ''
+      school: '',
+      wechatAccount: ''
     },
     picker: {
       visible: false,
@@ -196,97 +197,124 @@ Page({
           return;
         }
 
-        try {
-          wx.showLoading({ title: '提交中...' });
+        const { form } = this.data;
 
-          const { form } = this.data;
-
-          // 确保先调用login获取code
-          const data = await wx.login();
-          if (!data.code) {
-            wx.showToast({ title: '登录失败，请重试', icon: 'none' });
-            wx.hideLoading();
-            return;
-          }
-
-          const openid = getOpenID();
-
-          const heightValue = form?.userHeight?.label
-            ? String(form.userHeight.label).replace('cm', '')
-            : '';
-
-          let registerParams: any = {
-            openId: openid,
-            code: data.code,
-            nickName: form.nickName,
-            gender: form.gender?.value || 0,  // 修正gender值的处理方式
-            userBirthday: form.birthday?.label || '',
-            userHeight: heightValue,
-            userMbti: String(form.userMbti?.label || ''),
-            country: 'CN',
-            school: form.school || '',  // 学校字段现在是直接输入的字符串
-            language: 'zh_CN',
-            telephone: form.telephone,
-            occupation: String(form.occupation?.label || ''),  // 添加职业字段 因form中无occupation字段，暂时设置为空字符串，需先在form类定义中添加occupation字段
-          };
-
-          if (form.hometown) {
-            const [province, city] = form.hometown.value.toString().split('-');
-            registerParams.province = province;
-            registerParams.city = city;
-          }
-
-          if (form.location) {
-            const [presentProvince, presentCity] = form.location.value.toString().split('-');
-            registerParams.presentProvince = presentProvince;
-            registerParams.presentCity = presentCity;
-          }
-
-          const res = await postRegister(registerParams);
-
-          if (res.code === 0) {
-            const { token, userInfo } = res.data;
-
-            if (token) {
-              setToken(token);
-            }
-
-            if (userInfo) {
-              setOpenID(userInfo.openId);
-              setUserID(userInfo.id);
-
-              if (app.globalData) {
-                app.globalData.isRegistered = true;
-                (app.globalData as any).userInfo = userInfo;
+        // 如果用户已经填写了微信号，则直接提交
+        if (form.wechatAccount && form.wechatAccount.trim() !== '') {
+          await this.submitRegistration();
+        } else {
+          // 只有当用户没有填写微信号时，才显示二次确认弹窗
+          wx.showModal({
+            title: '确认提交',
+            content: '不填写微信号无法报名活动，确认提交注册信息吗？',
+            confirmText: '确认',
+            cancelText: '取消',
+            success: async (res) => {
+              if (res.confirm) {
+                await this.submitRegistration();
+              } else {
+                // 用户取消，停留在当前页面
+                console.log('用户取消提交');
               }
             }
-
-            wx.showToast({
-              title: '注册成功',
-              icon: 'success',
-            });
-
-            setTimeout(() => {
-              navigateHelper.goPhotoUpload();
-            }, 1000);
-          } else {
-            wx.showToast({
-              title: res.msg || '注册失败',
-              icon: 'none',
-            });
-          }
-        } catch (error) {
-          console.error('注册失败:', error);
-          wx.showToast({
-            title: '注册失败，请重试',
-            icon: 'none',
           });
-        } finally {
-          wx.hideLoading();
         }
       },
       500,
     );
+  },
+
+  // 封装提交注册信息的逻辑
+  async submitRegistration() {
+    try {
+      wx.showLoading({ title: '提交中...' });
+
+      const { form } = this.data;
+
+      // 确保先调用login获取code
+      const data = await wx.login();
+      if (!data.code) {
+        wx.showToast({ title: '登录失败，请重试', icon: 'none' });
+        wx.hideLoading();
+        return;
+      }
+
+      const openid = getOpenID();
+
+      const heightValue = form?.userHeight?.label
+        ? String(form.userHeight.label).replace('cm', '')
+        : '';
+
+      let registerParams: any = {
+        openId: openid,
+        code: data.code,
+        nickName: form.nickName,
+        gender: form.gender?.value || 0,  // 修正gender值的处理方式
+        userBirthday: form.birthday?.label || '',
+        userHeight: heightValue,
+        userMbti: String(form.userMbti?.label || ''),
+        country: 'CN',
+        school: form.school || '',  // 学校字段现在是直接输入的字符串
+        language: 'zh_CN',
+        telephone: form.telephone,
+        occupation: String(form.occupation?.label || ''),  // 添加职业字段 因form中无occupation字段，暂时设置为空字符串，需先在form类定义中添加occupation字段
+        wechatAccount: form.wechatAccount || '', // 添加微信号字段
+      };
+
+      if (form.hometown) {
+        const [province, city] = form.hometown.value.toString().split('-');
+        registerParams.province = province;
+        registerParams.city = city;
+      }
+
+      if (form.location) {
+        const [presentProvince, presentCity] = form.location.value.toString().split('-');
+        registerParams.presentProvince = presentProvince;
+        registerParams.presentCity = presentCity;
+      }
+
+      const res = await postRegister(registerParams);
+
+      if (res.code === 0) {
+        const { token, userInfo } = res.data;
+
+        if (token) {
+          setToken(token);
+        }
+
+        if (userInfo) {
+          setOpenID(userInfo.openId);
+          setUserID(userInfo.id);
+
+          if (app.globalData) {
+            app.globalData.isRegistered = true;
+            (app.globalData as any).userInfo = userInfo;
+          }
+        }
+
+        wx.showToast({
+          title: '注册成功',
+          icon: 'success',
+        });
+
+        setTimeout(() => {
+          navigateHelper.goPhotoUpload();
+        }, 1000);
+      } else {
+        wx.showToast({
+          title: res.msg || '注册失败',
+          icon: 'none',
+        });
+      }
+    } catch (error) {
+      console.error('注册失败:', error);
+      wx.showToast({
+        title: '注册失败，请重试',
+        icon: 'none',
+      });
+    } finally {
+      wx.hideLoading();
+    }
   },
 
   validateForm() {
@@ -380,6 +408,13 @@ Page({
   onSchoolInput(e: WechatMiniprogram.CustomEvent<{ value: string }>) {
     this.setData({
       'form.school': e.detail.value
+    });
+  },
+
+  // 微信号输入处理
+  onWechatInput(e: WechatMiniprogram.CustomEvent<{ value: string }>) {
+    this.setData({
+      'form.wechatAccount': e.detail.value
     });
   },
 
