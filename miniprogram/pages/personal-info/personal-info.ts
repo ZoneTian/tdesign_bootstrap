@@ -403,7 +403,13 @@ Page({
       return false;
     }
 
-
+    if (!form.school || !form.school.label) {
+      wx.showToast({
+        title: '请选择学校',
+        icon: 'none',
+      });
+      return false;
+    }
 
     return true;
   },

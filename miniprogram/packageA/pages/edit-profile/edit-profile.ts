@@ -894,6 +894,15 @@ Page({
       return false;
     }
 
+    // 验证学校（必填）
+    if (!form.school || !form.school.label) {
+      wx.showToast({
+        title: '请选择学校',
+        icon: 'none',
+      });
+      return false;
+    }
+
     return true;
   },
 

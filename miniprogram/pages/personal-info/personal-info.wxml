@@ -190,7 +190,7 @@
       data-field="school"
     >
       <view class="label-group">
-        <text class="label">学校</text>
+        <text class="label">学校<text class="disabled"> *</text></text>
         <view wx:if="{{ !form.school || !form.school.label }}" class="placeholder">请选择学校</view>
       </view>
       <view class="label-result">
