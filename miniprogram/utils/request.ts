@@ -16,6 +16,10 @@ export interface RequestOptions {
   method?: "GET" | "POST" | "PUT" | "DELETE";
   headers?: Record<string, string>;
   /**
+   * 是否需要用户ID
+   */
+  needUser?: boolean;
+  /**
    * 显式重试次数，默认不重试
    */
   retryCount?: number;
@@ -57,18 +61,19 @@ export function request<T = any>(options: RequestOptions): Promise<T> {
     method = "GET",
     headers,
     retryCount = 0,
+    needUser = true
   } = options;
 
   // 获取用户ID
   let userId = data?.userId ? data.userId : getUserID();
   // 如果用户已登录且有userId，将其添加到请求参数中
   let finalData = { ...data };
-  if (userId) {
+  if (userId && needUser) {
     if (method === "GET") {
       // 对于GET请求，将userId添加到URL中
       const separator = url.includes('?') ? '&' : '?';
       options.url = `${url}${separator}userId=${userId}`;
-    } else {
+    } else if (needUser) {
       // 对于其他请求方法，将userId添加到请求体中
       finalData = { ...finalData, userId };
     }

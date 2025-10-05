@@ -101,7 +101,6 @@ page {
     background-size: 15.3648rpx 26.9231rpx;
   }
 
-
   &.last-form-item {
     .px2rpx(border-width,0);
   }
@@ -152,4 +151,75 @@ page {
   .px2rpx(line-height,58);
 
   .px2rpx(margin-bottom, @safe-bottom);
+}
+
+.school-search-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.school-search-container {
+  width: 100%;
+  max-height: 80vh;
+  background-color: #fff;
+  border-radius: 16rpx 16rpx 0 0;
+}
+
+.school-search-header {
+  padding: 20rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.school-search-input-group {
+  background-color: #f8f8f8;
+  border-radius: 8rpx;
+  padding: 0 20rpx;
+}
+
+.school-search-input {
+  height: 80rpx;
+  font-size: 28rpx;
+}
+
+.school-search-list {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.school-item {
+  padding: 30rpx 40rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+  font-size: 30rpx;
+}
+
+.school-item:active {
+  background-color: #f8f8f8;
+}
+
+.school-search-empty {
+  padding: 60rpx 40rpx;
+  text-align: center;
+  color: #999;
+  font-size: 28rpx;
+}
+
+.school-search-footer {
+  padding: 20rpx;
+  border-top: 1rpx solid #f0f0f0;
+}
+
+.school-search-cancel {
+  background-color: #f8f8f8;
+  color: #333;
+  font-size: 32rpx;
+  height: 88rpx;
+  line-height: 88rpx;
 }

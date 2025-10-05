@@ -1,5 +1,5 @@
-import { postRegister } from '../../utils/api';
-import { getMbtiOptions, getOccupationOptions, getSchoolOptions } from '../../utils/dataSource';
+import { postRegister, getSchoolListAPI } from '../../utils/api';
+import { getMbtiOptions, getOccupationOptions } from '../../utils/dataSource';
 import * as navigateHelper from '../../utils/navigateHelper';
 import { getOpenID, setToken, setOpenID, setUserID } from '../../utils/auth';
 import { DebounceHelper } from '../../utils/debounce';
@@ -45,7 +45,7 @@ Page({
       location: null as Option | null,
       occupation: null as Option | null,
       telephone: '',
-      school: '',
+      school: null as { label: string; value: string } | null,
       wechatAccount: ''
     },
     picker: {
@@ -53,6 +53,11 @@ Page({
       field: '',
       title: '',
       options: [] as Option[],
+    },
+    schoolSearch: {
+      visible: false,
+      keyword: '',
+      list: [] as Array<{ label: string; value: string }>
     },
     pickerOptionsMap: {
       gender: [
@@ -64,7 +69,6 @@ Page({
       birthday: null as Option[] | null,
       userMbti: null as Option[] | null,
       occupation: null as Option[] | null,
-      school: null as Option[] | null,
       income: null as Option[] | null,
     } as PickerOptionsMap,
   },
@@ -246,20 +250,20 @@ Page({
         : '';
 
       let registerParams: any = {
-        openId: openid,
-        code: data.code,
-        nickName: form.nickName,
-        gender: form.gender?.value || 0,  // 修正gender值的处理方式
-        userBirthday: form.birthday?.label || '',
-        userHeight: heightValue,
-        userMbti: String(form.userMbti?.label || ''),
-        country: 'CN',
-        school: form.school || '',  // 学校字段现在是直接输入的字符串
-        language: 'zh_CN',
-        telephone: form.telephone,
-        occupation: String(form.occupation?.label || ''),  // 添加职业字段 因form中无occupation字段，暂时设置为空字符串，需先在form类定义中添加occupation字段
-        wechatAccount: form.wechatAccount || '', // 添加微信号字段
-      };
+      openId: openid,
+      code: data.code,
+      nickName: form.nickName,
+      gender: form.gender?.value || 0,  // 修正gender值的处理方式
+      userBirthday: form.birthday?.label || '',
+      userHeight: heightValue,
+      userMbti: String(form.userMbti?.label || ''),
+      country: 'CN',
+      school: form.school && form.school.label ? form.school.label : '',
+      language: 'zh_CN',
+      telephone: form.telephone,
+      occupation: String(form.occupation?.label || ''),
+      wechatAccount: form.wechatAccount || '',
+    };
 
       if (form.hometown) {
         const [province, city] = form.hometown.value.toString().split('-');
@@ -404,11 +408,58 @@ Page({
     return true;
   },
 
-  // 学校输入处理
-  onSchoolInput(e: WechatMiniprogram.CustomEvent<{ value: string }>) {
+  // 显示学校选择器
+  onHandleSchoolPicker() {
     this.setData({
-      'form.school': e.detail.value
+      'schoolSearch.visible': true,
+      'schoolSearch.keyword': '',
+      'schoolSearch.list': []
     });
+  },
+
+  // 学校搜索关键词输入
+  onSchoolKeywordInput(e: WechatMiniprogram.CustomEvent<{ value: string }>) {
+    const keyword = e.detail.value;
+    this.setData({ 'schoolSearch.keyword': keyword });
+    
+    // 防抖处理，避免频繁请求
+    DebounceHelper.execute('schoolSearch', async () => {
+      if (keyword.trim()) {
+        try {
+          wx.showLoading({ title: '搜索中...' });
+          const res = await getSchoolListAPI(keyword, 1, 10);
+          
+          if (res.data && res.data.list) {
+            const schoolList = res.data.list.map((item: any) => ({
+              label: item.schoolName, 
+              value: item.id 
+            }));
+            this.setData({ 'schoolSearch.list': schoolList });
+          }
+        } catch (error) {
+          console.error('获取学校列表失败', error);
+          wx.showToast({ title: '获取学校列表失败', icon: 'none' });
+        } finally {
+          wx.hideLoading();
+        }
+      } else {
+        this.setData({ 'schoolSearch.list': [] });
+      }
+    }, 300);
+  },
+
+  // 选择学校
+  onSchoolSelect(e: WechatMiniprogram.TouchEvent) {
+    const { value, label } = e.currentTarget.dataset;
+    this.setData({
+      'form.school': { label, value },
+      'schoolSearch.visible': false
+    });
+  },
+
+  // 取消学校选择
+  onSchoolSelectCancel() {
+    this.setData({ 'schoolSearch.visible': false });
   },
 
   // 微信号输入处理
@@ -462,13 +513,7 @@ Page({
     });
   },
 
-  async initSchoolOptions() {
-    // 使用公共数据源中的学校选项
-    const schoolOptions = getSchoolOptions();
-    this.setData({
-      'pickerOptionsMap.school': schoolOptions,
-    });
-  },
+
 
   async onShow() {
     await this.initHeightOptions();

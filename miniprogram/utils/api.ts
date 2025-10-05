@@ -95,6 +95,26 @@ export const getArea = async (shortCode: string): Promise<Res<AreaTree[]>> => {
   return response;
 };
 
+export type SchoolItem = {
+  id: number;
+  schoolName: string;
+};
+
+// 获取学校列表 - 调用外部API
+export const getSchoolListAPI = async (schoolName: string, pageNum: number = 1, pageSize: number = 10): Promise<Res<{ list: SchoolItem[]; total: number }>> => {
+  const requestConfig: RequestOptions = {
+    url: `/v1/school/list`,
+    method: 'GET',
+    needUser: false,
+    data: {
+      pageNum,
+      pageSize,
+      schoolName
+    }
+  };
+  return request(requestConfig);
+};
+
 export type DictDataBase = {
   id: number;
   label: string;
@@ -126,7 +146,7 @@ export const getMbti = async (): Promise<Res<DictDataMBTI[]>> => {
   return await requestWithRetry(requestConfig);
 };
 
-// 获取学校
+// 获取学校 - 内部数据字典
 export const getSchool = async (): Promise<Res<DictDataSchool[]>> => {
   const schoolList = getSchoolList();
 

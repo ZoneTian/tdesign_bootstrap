@@ -455,7 +455,15 @@ Page({
     );
 
 
-  }
+  },
   // onAddToFavorites
   // packageA/pages/events-info/events-info
+
+  // 添加转发功能
+  onShareAppMessage() {
+    return {
+      title: '发现有趣的人，参与精彩活动',
+      path: '/pages/home/home',
+    };
+  },
 });

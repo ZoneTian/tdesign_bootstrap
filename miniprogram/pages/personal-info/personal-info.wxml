@@ -186,19 +186,19 @@
     </view>
     <view 
       class="form-item" 
+      bindtap="onHandleSchoolPicker"
       data-field="school"
     >
       <view class="label-group">
         <text class="label">学校</text>
-        <view wx:if="{{ !form.school }}" class="placeholder">请输入学校</view>
+        <view wx:if="{{ !form.school || !form.school.label }}" class="placeholder">请选择学校</view>
       </view>
-      <view class="label-result-input">
+      <view class="label-result">
         <input 
           type="text" 
           class="form-input" 
-          value="{{form.school}}"
-          bindinput="onSchoolInput"
-          placeholder="请输入学校"
+          value="{{form.school && form.school.label}}"
+          disabled
         />
       </view>
     </view>
@@ -218,7 +218,6 @@
           class="form-input" 
           value="{{form.wechatAccount}}"
           bindinput="onWechatInput"
-          placeholder="请输入微信号"
         />
       </view>
     </view>
@@ -254,3 +253,39 @@
   bind:confirm="onPickerConfirm"
   bind:cancel="onPickerCancel"
 />
+
+<!-- 学校搜索选择器 -->
+<view class="school-search-overlay" wx:if="{{schoolSearch.visible}}">
+  <view class="school-search-container">
+    <view class="school-search-header">
+      <view class="school-search-input-group">
+        <input
+          type="text"
+          class="school-search-input"
+          placeholder="请输入学校名称"
+          value="{{schoolSearch.keyword}}"
+          bindinput="onSchoolKeywordInput"
+          auto-focus
+        />
+      </view>
+    </view>
+    <view class="school-search-list">
+      <view wx:if="{{schoolSearch.list.length > 0}}">
+        <view class="school-item" wx:for="{{schoolSearch.list}}" wx:key="value"
+          data-value="{{item.value}}"
+          data-label="{{item.label}}"
+          bindtap="onSchoolSelect"
+        >
+          {{item.label}}
+        </view>
+      </view>
+      <view wx:else class="school-search-empty">
+        {{schoolSearch.keyword ? '未找到相关学校' : '请输入学校名称搜索'}}
+      </view>
+    </view>
+    <view class="school-search-footer">
+      <button class="school-search-cancel" bindtap="onSchoolSelectCancel">取消</button>
+    </view>
+  </view>
+</view>
+
