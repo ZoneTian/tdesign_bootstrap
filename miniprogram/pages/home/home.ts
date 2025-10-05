@@ -7,7 +7,8 @@ import {
   followsStatus,
   FollowStatusOptions,
   getDislikeStatus,
-  CouponItem
+  CouponItem,
+  getCouponPopover
 } from '../../utils/api';
 import { getUserID } from '../../utils/auth';
 import { DebounceHelper, NavigateDebounce } from '../../utils/debounce';
@@ -427,7 +428,7 @@ Page({
   },
 
   // 检查并显示优惠券弹窗
-  checkAndShowCouponPopup() {
+  async checkAndShowCouponPopup() {
     // 使用any类型断言来避免类型检查错误
     const globalData = app.globalData as any;
     const that = this
@@ -450,6 +451,7 @@ Page({
 
 
     if (!app.globalData.presentPopupShow) {
+
       if (app.globalData.userInfo.photoReviewStatus !== 1) {
         this.setData({
           'popup.title': '您可以获得 1 次免费 \n 参加活动的机会',
@@ -465,18 +467,43 @@ Page({
         });
         return;
       }
-      this.setData({
-        'popup.title': '您可以获得 1 次免费 \n 参加活动的机会',
-        'popup.subtitle': '只被需2人关注即可免费获得',
-        'popup.btnText': '知道了',
-        'popup.icon': 'present',
-      }, () => {
-        that.setData({
-          showVisible: true,
-        });
-        // 设置弹窗已显示状态
-        app.globalData.presentPopupShow = true
-      });
+      // this.setData({
+      //   'popup.title': '您可以获得 1 次免费 \n 参加活动的机会',
+      //   'popup.subtitle': '只被需2人关注即可免费获得',
+      //   'popup.btnText': '知道了',
+      //   'popup.icon': 'present',
+      // }, () => {
+      //   that.setData({
+      //     showVisible: true,
+      //   });
+      //   // 设置弹窗已显示状态
+      //   app.globalData.presentPopupShow = true
+      // });
+      // 调用新的优惠券弹窗接口
+      try {
+        const popoverRes = await getCouponPopover();
+
+        if (popoverRes.code === 0 && popoverRes.data && popoverRes.data.popoverFlag) {
+
+          // 设置弹窗内容
+          this.setData({
+            'popup.title': '您可以获得 1 次免费 \n 参加活动的机会',
+            'popup.subtitle': '只被需更多人关注即可免费获得',
+            'popup.btnText': '知道了',
+            'popup.icon': 'present',
+          }, () => {
+            that.setData({
+              showVisible: true,
+            });
+            // 设置弹窗已显示状态
+            app.globalData.presentPopupShow = true
+          });
+          return;
+        }
+      } catch (error) {
+        console.error('获取优惠券弹窗数据失败:', error);
+        // 接口调用失败时，使用原有逻辑
+      }
     }
   },
   // onAddToFavorites

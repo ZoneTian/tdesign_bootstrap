@@ -667,11 +667,32 @@ export type CouponItem = {
   // 可以根据实际返回字段添加更多属性
 };
 
+// 优惠券弹窗数据类型
+export type CouponPopoverData = {
+
+  popoverFlag?: boolean;
+  // 可以根据实际返回字段添加更多属性
+};
+
 // 获取用户未使用的优惠券列表
 export const getUnusedCouponList = async (): Promise<Res<CouponItem[]>> => {
   const requestConfig: RequestOptions = {
     url: '/v1/mp/user/unusedCouponList',
     method: 'POST',
+  };
+  return await request(requestConfig);
+};
+
+// 获取优惠券弹窗数据
+export const getCouponPopover = async (): Promise<Res<CouponPopoverData>> => {
+  const requestConfig: RequestOptions = {
+    url: '/v1/mp/coupon/popover',
+    method: 'GET',
+    needUser: false,
+    headers: {
+      'verify-code': 'owx6q5aL63n-e4OTKjHQJTbr6ZFY',
+      'api-access-token': 'eyJhbGciOiJIUzUxMiJ9.eyJsb2dpbl91c2VyOiI6ImVkN2UxMzZhLTA4YmUtNDBkZC1hYWVjLWY1ZDcyNzA4ZTE3ZiIsImxvZ2luX3VzZXJfaWQ6IjoyfQ.wPuAZXJkkZuxxh4twYpZhx_aAlKMw3qxskPlMIw1VEngLGrVTEIL-t71HUJFz-f3arGGaIJTdjxsBhMxJQ0LNg'
+    }
   };
   return await request(requestConfig);
 };
