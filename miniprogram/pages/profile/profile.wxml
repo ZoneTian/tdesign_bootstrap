@@ -1,3 +1,10 @@
+<!--
+ * @Author: zone Tian
+ * @Date: 2025-09-30 09:14:13
+ * @LastEditors: zone Tian
+ * @LastEditTime: 2025-10-05 19:17:47
+ * @Description: file content
+-->
 <navigation-bar back="{{true}}" color="black" ></navigation-bar>
 
 <view class="page-wrapper profile">
@@ -34,6 +41,10 @@
         <view class="info-point-item" ontap="onLikesMe">
           <view class="point">{{profile.fansCount}}</view>
           <view class="text">喜欢我的</view>
+        </view>
+         <view class="info-point-item" ontap="onLikesMe">
+          <view class="point">{{totalCouponCount || 0}}</view>
+          <view class="text">优惠券</view>
         </view>
       </view>
 

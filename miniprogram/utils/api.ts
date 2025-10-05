@@ -657,3 +657,21 @@ export const onRemoveImage = async (options: { userId: number | String; socialIm
   };
   return await request(requestConfig);
 };
+
+// 优惠券类型定义
+export type CouponItem = {
+  id?: number;
+  couponType: number;
+  couponCount: number;
+  couponName?: string;
+  // 可以根据实际返回字段添加更多属性
+};
+
+// 获取用户未使用的优惠券列表
+export const getUnusedCouponList = async (): Promise<Res<CouponItem[]>> => {
+  const requestConfig: RequestOptions = {
+    url: '/v1/mp/user/unusedCouponList',
+    method: 'POST',
+  };
+  return await request(requestConfig);
+};

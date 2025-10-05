@@ -232,8 +232,6 @@ Page({
 
     // 初始化职业
     let occupation = userDetail.occupation;
-    console.log(occupation, "zone");
-
     // 初始化生日
     let birthday = null;
     if (userDetail.userBirthday) {
@@ -520,18 +518,18 @@ Page({
   onSchoolKeywordInput(e: WechatMiniprogram.CustomEvent<{ value: string }>) {
     const keyword = e.detail.value;
     this.setData({ 'schoolSearch.keyword': keyword });
-    
+
     // 防抖处理，避免频繁请求
     DebounceHelper.execute('schoolSearch', async () => {
       if (keyword.trim()) {
         try {
           wx.showLoading({ title: '搜索中...' });
           const res = await getSchoolListAPI(keyword, 1, 10);
-          
+
           if (res.data && res.data.list) {
             const schoolList = res.data.list.map((item: any) => ({
-              label: item.schoolName, 
-              value: item.id 
+              label: item.schoolName,
+              value: item.id
             }));
             this.setData({ 'schoolSearch.list': schoolList });
           }

@@ -7,23 +7,14 @@ import {
   followsStatus,
   FollowStatusOptions,
   getDislikeStatus,
+  CouponItem
 } from '../../utils/api';
 import { getUserID } from '../../utils/auth';
 import { DebounceHelper, NavigateDebounce } from '../../utils/debounce';
 import { POPUP_SHOWN_KEY } from '../../utils/constants';
 import { subscribeMessage } from '../../utils/subscribe';
 
-const app = getApp<
-  IAppOption & {
-    globalData: {
-      userInfo: WechatMiniprogram.UserInfo | null;
-      hasLogin: boolean;
-      isRegistered: boolean;
-      showVisible: boolean;
-      presentPopupShow: boolean;
-    };
-  }
->();
+const app = getApp();
 
 Page({
   data: {
@@ -57,6 +48,9 @@ Page({
     footerHeight: '160rpx',
     // 当前轮播图索引
     currentSwiperIndex: 0,
+    // 优惠券弹窗相关数据
+    showCouponPopup: false,
+    couponData: null as CouponItem | null
   },
   bindanimationfinish(
     e: WechatMiniprogram.CustomEvent<{
@@ -240,35 +234,7 @@ Page({
   onLoad() {
     // 检查弹窗是否已经显示过
     const that = this
-    if (!app.globalData.presentPopupShow) {
-      if (app.globalData.userInfo.photoReviewStatus !== 1) {
-        this.setData({
-          'popup.title': '您可以获得 1 次免费 \n 参加活动的机会',
-          'popup.subtitle': '只需上传社交照片，并通过人脸认证',
-          'popup.btnText': '知道了',
-          'popup.icon': 'present',
-        }, () => {
-          that.setData({
-            showVisible: true,
-          });
-          // 设置弹窗已显示状态
-          app.globalData.presentPopupShow = true
-        });
-        return;
-      }
-      this.setData({
-        'popup.title': '您可以获得 1 次免费 \n 参加活动的机会',
-        'popup.subtitle': '只被需2人关注即可免费获得',
-        'popup.btnText': '知道了',
-        'popup.icon': 'present',
-      }, () => {
-        that.setData({
-          showVisible: true,
-        });
-        // 设置弹窗已显示状态
-        app.globalData.presentPopupShow = true
-      });
-    }
+
 
     // 检查登录状态
     this.checkLoginStatus = function () {
@@ -285,7 +251,12 @@ Page({
     this.loadReferrerList();
     // 获取底部导航栏高度
     this.getFooterHeight();
+    setTimeout(() => {
+      // // 检查并显示优惠券弹窗
+      this.checkAndShowCouponPopup();
+    }, 1000);
   },
+
 
   // 页面卸载时清除弹窗显示状态
   onUnload() {
@@ -453,8 +424,60 @@ Page({
       },
       300,
     );
+  },
+
+  // 检查并显示优惠券弹窗
+  checkAndShowCouponPopup() {
+    // 使用any类型断言来避免类型检查错误
+    const globalData = app.globalData as any;
+    const that = this
+    if (globalData.couponData) {
+      this.setData({
+        'popup.title': '您可以获得 1 次免费 \n 参加活动的机会',
+        'popup.subtitle': '',
+        'popup.btnText': '知道了',
+        'popup.icon': 'present',
+      }, () => {
+        that.setData({
+          showVisible: true,
+        });
+        // 设置弹窗已显示状态
+        app.globalData.presentPopupShow = true
+      });
+      // 避免重复弹窗，更新app中的状态
+      return;
+    }
 
 
+    if (!app.globalData.presentPopupShow) {
+      if (app.globalData.userInfo.photoReviewStatus !== 1) {
+        this.setData({
+          'popup.title': '您可以获得 1 次免费 \n 参加活动的机会',
+          'popup.subtitle': '只需上传社交照片，并通过人脸认证',
+          'popup.btnText': '知道了',
+          'popup.icon': 'present',
+        }, () => {
+          that.setData({
+            showVisible: true,
+          });
+          // 设置弹窗已显示状态
+          app.globalData.presentPopupShow = true
+        });
+        return;
+      }
+      this.setData({
+        'popup.title': '您可以获得 1 次免费 \n 参加活动的机会',
+        'popup.subtitle': '只被需2人关注即可免费获得',
+        'popup.btnText': '知道了',
+        'popup.icon': 'present',
+      }, () => {
+        that.setData({
+          showVisible: true,
+        });
+        // 设置弹窗已显示状态
+        app.globalData.presentPopupShow = true
+      });
+    }
   },
   // onAddToFavorites
   // packageA/pages/events-info/events-info

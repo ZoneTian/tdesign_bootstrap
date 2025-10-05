@@ -9,6 +9,7 @@ const app = getApp<
       hasLogin: boolean;
       isRegistered: boolean;
       showVisible: boolean;
+      totalCouponCount: number; // 优惠券总数
       userInfo?: {
         nickName: string;
         [key: string]: any;
@@ -32,6 +33,7 @@ Page({
     // 从全局数据中获取用户昵称和注册状态
     if (app.globalData) {
       // 获取用户昵称
+
       if (app.globalData.userInfo && app.globalData.userInfo.nickName) {
         this.setData({
           'profile.nickName': app.globalData.userInfo.nickName,
@@ -46,6 +48,7 @@ Page({
               : 0,
           photoReviewStatus: app.globalData.userInfo.photoReviewStatus,
           isRegistered: !!app.globalData.isRegistered,
+          totalCouponCount: app.globalData.totalCouponCount, // 优惠券总数
         });
       }
     }

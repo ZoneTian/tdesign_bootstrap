@@ -80,3 +80,6 @@
 <!-- 底部占位元素，与footer-bar高度相同 -->
 <view class="footer-placeholder" style="height: {{footerHeight}}; box-sizing: border-box;"></view>
 
+
+
+

@@ -1,5 +1,5 @@
 // app.ts
-import { postLogin } from './utils/api';
+import { postLogin, getUnusedCouponList } from './utils/api';
 import { setToken, setOpenID, setUserID } from './utils/auth';
 
 // 登录状态Promise
@@ -35,7 +35,9 @@ interface GlobalData {
   isRegistered: boolean;
   showVisible: boolean;
   presentPopupShow: boolean;
-  userInfo?: userInfoData
+  userInfo?: userInfoData;
+  totalCouponCount: number; // 优惠券总数
+  couponData?: any; // 优惠券数据
 }
 
 App<IAppOption & { globalData: GlobalData }>({
@@ -62,7 +64,9 @@ App<IAppOption & { globalData: GlobalData }>({
     hasLogin: false,
     isRegistered: false,
     showVisible: false,
-    presentPopupShow: false
+    presentPopupShow: false,
+    totalCouponCount: 0,
+    couponData: null
   },
   async onLaunch() {
     // 检查版本更新
@@ -134,6 +138,24 @@ App<IAppOption & { globalData: GlobalData }>({
 
               // 登录完成，解析Promise
               loginResolve();
+
+              // 调用优惠券接口
+              (async () => {
+                try {
+                  const couponRes = await getUnusedCouponList();
+                  if (couponRes.code === 0 && couponRes.data && Array.isArray(couponRes.data)) {
+                    // 查找couponType为0且couponCount大于0的优惠券
+                    const targetCoupon = couponRes.data.find((item: any) => item.couponType === 0 && item.couponCount > 0);
+                    if (targetCoupon) {
+                      this.globalData.couponData = targetCoupon;
+                    }
+                    const totalCouponCount = couponRes.data.reduce((sum, item) => sum + item.couponCount, 0);
+                    this.globalData.totalCouponCount = totalCouponCount;
+                  }
+                } catch (error) {
+                  console.error('获取优惠券列表失败:', error);
+                }
+              })();
             } else {
               console.error('登录失败:', loginRes.msg);
               wx.showToast({
