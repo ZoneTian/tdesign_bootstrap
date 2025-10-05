@@ -12,6 +12,7 @@ import { compressImage, uploadFileWithProgress } from '../../../utils/file';
 import { getUserID } from '../../../utils/auth';
 import { DebounceHelper, NavigateDebounce } from '../../../utils/debounce';
 import { validateChinesePhoneNumber } from '../../../utils/validate';
+import { getSchoolListAPI } from '../../../utils/api';
 
 
 export interface PickerOption {
@@ -37,7 +38,7 @@ Page({
       hometown: null as Option | null,
       location: null as Option | null,
       occupation: null as Option | null,
-      school: '',
+      school: null as { label: string; value: string } | null,
       // 隐私信息
       selfDescription: '',
       friendshipTend: '',
@@ -58,6 +59,11 @@ Page({
       title: '',
       options: [] as Option[],
     },
+    schoolSearch: {
+      visible: false,
+      keyword: '',
+      list: [] as Array<{ label: string; value: string }>
+    },
     pickerOptionsMap: {
       gender: [
         { label: '男', value: 'male' },
@@ -69,7 +75,6 @@ Page({
       userMbti: null as Option[] | null,
       occupation: null as Option[] | null,
       income: null as Option[] | null,
-      school: null as Option[] | null,
     } as PickerOptionsMap,
     userDetail: null as WeChatUserDetailVo | null,
   },
@@ -222,8 +227,8 @@ Page({
     // 初始化MBTI（直接使用字符串）
     const userMbti = userDetail.userMbti || '';
 
-    // 初始化学校（直接使用字符串）
-    const school = userDetail.school || '';
+    // 初始化学校（作为对象）
+    const school = userDetail.school ? { label: userDetail.school, value: '' } : null;
 
     // 初始化职业
     let occupation = userDetail.occupation;
@@ -502,6 +507,60 @@ Page({
     this.setData({ 'picker.visible': false });
   },
 
+  // 显示学校选择器
+  onHandleSchoolPicker() {
+    this.setData({
+      'schoolSearch.visible': true,
+      'schoolSearch.keyword': '',
+      'schoolSearch.list': []
+    });
+  },
+
+  // 学校搜索关键词输入
+  onSchoolKeywordInput(e: WechatMiniprogram.CustomEvent<{ value: string }>) {
+    const keyword = e.detail.value;
+    this.setData({ 'schoolSearch.keyword': keyword });
+    
+    // 防抖处理，避免频繁请求
+    DebounceHelper.execute('schoolSearch', async () => {
+      if (keyword.trim()) {
+        try {
+          wx.showLoading({ title: '搜索中...' });
+          const res = await getSchoolListAPI(keyword, 1, 10);
+          
+          if (res.data && res.data.list) {
+            const schoolList = res.data.list.map((item: any) => ({
+              label: item.schoolName, 
+              value: item.id 
+            }));
+            this.setData({ 'schoolSearch.list': schoolList });
+          }
+        } catch (error) {
+          console.error('获取学校列表失败', error);
+          wx.showToast({ title: '获取学校列表失败', icon: 'none' });
+        } finally {
+          wx.hideLoading();
+        }
+      } else {
+        this.setData({ 'schoolSearch.list': [] });
+      }
+    }, 300);
+  },
+
+  // 选择学校
+  onSchoolSelect(e: WechatMiniprogram.TouchEvent) {
+    const { value, label } = e.currentTarget.dataset;
+    this.setData({
+      'form.school': { label, value },
+      'schoolSearch.visible': false
+    });
+  },
+
+  // 取消学校选择
+  onSchoolSelectCancel() {
+    this.setData({ 'schoolSearch.visible': false });
+  },
+
   // 删除已上传的图片
   async onRemoveImage(e: WechatMiniprogram.CustomEvent) {
     const field = e.currentTarget.dataset.field;
@@ -683,8 +742,8 @@ Page({
       }
 
       // 添加学校
-      if (form.school) {
-        updateParams.school = form.school;
+      if (form.school && form.school.label) {
+        updateParams.school = form.school.label;
       }
 
       // 添加其他字段（如果有变化）
