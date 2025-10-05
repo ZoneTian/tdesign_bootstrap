@@ -1,3 +1,10 @@
+/*
+ * @Author: zone Tian
+ * @Date: 2025-09-30 09:14:13
+ * @LastEditors: zone Tian
+ * @LastEditTime: 2025-10-05 20:47:43
+ * @Description: file conten
+ */
 const iconMap = {
   'register': 'https://qiniustatic.womenshike.top/icon-action-popup-register.png',
   'identify': 'https://qiniustatic.womenshike.top/icon-action-popup-identify.png',
@@ -21,10 +28,8 @@ Component({
   observers: {
     icon: function (icon) {
       // 如果设置了icon，则根据iconMap设置默认图标
-      console.log('icon', icon);
 
       if (icon !== '') {
-        console.log('defaultIcon', icon);
         const defaultIcon = iconMap[icon as keyof typeof iconMap] || '';
         this.setData({ iconUrl: defaultIcon });
       }

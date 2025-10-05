@@ -103,7 +103,6 @@ App<IAppOption & { globalData: GlobalData }>({
     // 登录
     await wx.login({
       success: async (res) => {
-        console.log('登录成功，获取到 code:', res.code);
         // 发送 res.code 到后台换取 openId, sessionKey, unionId
         if (res.code) {
           await postLogin({
@@ -129,12 +128,8 @@ App<IAppOption & { globalData: GlobalData }>({
                 this.globalData.userInfo = formattedUserInfo; // 保存用户详细信息
 
               }
-              console.log('登录成功，已获取用户信息和 openid');
-              console.log('用户注册状态:', registeredFlag ? '已注册' : '未注册');
-
               // 如果用户未注册，设置 showVisible 为 true
               this.globalData.showVisible = !registeredFlag;
-              console.log('showVisible:', this.globalData.showVisible);
 
               // 登录完成，解析Promise
               loginResolve();
@@ -147,7 +142,7 @@ App<IAppOption & { globalData: GlobalData }>({
                     // 查找couponType为0且couponCount大于0的优惠券
                     const targetCoupon = couponRes.data.find((item: any) => item.couponType === 0 && item.couponCount > 0);
                     if (targetCoupon) {
-                      this.globalData.couponData = targetCoupon;
+                      this.globalData.couponData = targetCoupon?.couponCount || 0;
                     }
                     const totalCouponCount = couponRes.data.reduce((sum, item) => sum + item.couponCount, 0);
                     this.globalData.totalCouponCount = totalCouponCount;

@@ -80,7 +80,6 @@ Page({
   },
 
   async onLoad(options) {
-    console.log('edit-profile onLoad with options:', options);
     // 获取传递的userId参数
     const userId = options.userId ? Number(options.userId) : undefined;
     this.setData({
@@ -494,7 +493,6 @@ Page({
 
   onPickerConfirm(event: WechatMiniprogram.CustomEvent<{ field: string; selected: Option }>) {
     const { field, selected } = event.detail;
-    console.log('onPickerConfirm', field, selected);
     this.setData({
       [`form.${field}`]: selected,
       'picker.visible': false,
@@ -571,7 +569,6 @@ Page({
       [key]: null,
     });
 
-    console.log(`已删除${field}图片`);
     const userId = getUserID();
     const socialImg = Number(id);
     const res = await onRemoveImage({ userId: Number(userId), socialImg });

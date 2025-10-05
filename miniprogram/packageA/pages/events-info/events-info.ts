@@ -168,7 +168,6 @@ Page({
   },
   // 获取活动详情
   async fetchActivityDetail(id: string) {
-    console.log('id', id);
 
     wx.showLoading({ title: '加载中...' });
     try {
