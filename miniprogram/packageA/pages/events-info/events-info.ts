@@ -334,9 +334,9 @@ Page({
 
 
   async onPayment() {
-    // if (this.data.registrationStatus.isBeforeRegistration || this.data.registrationStatus.isAfterRegistration) {
-    //   return;
-    // }
+    if (this.data.registrationStatus.isBeforeRegistration || this.data.registrationStatus.isAfterRegistration) {
+      return;
+    }
 
     if (!app.globalData.isRegistered || app.globalData.userInfo.photoReviewStatus === 0) {
       const isRegistered = app.globalData.isRegistered;
