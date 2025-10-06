@@ -5,6 +5,8 @@ import {
   applyActivity,
   getActivityApplyUserList,
   ActivityMpApplyUserListVo,
+  getUnusedCouponList,
+  verifyCoupon,
 } from '../../../utils/api';
 import { DEFAULT_AVATAR } from '../../../utils/constants';
 import { NavigateDebounce } from '../../../utils/debounce';
@@ -332,9 +334,9 @@ Page({
 
 
   async onPayment() {
-    if (this.data.registrationStatus.isBeforeRegistration || this.data.registrationStatus.isAfterRegistration) {
-      return;
-    }
+    // if (this.data.registrationStatus.isBeforeRegistration || this.data.registrationStatus.isAfterRegistration) {
+    //   return;
+    // }
 
     if (!app.globalData.isRegistered || app.globalData.userInfo.photoReviewStatus === 0) {
       const isRegistered = app.globalData.isRegistered;
@@ -365,6 +367,34 @@ Page({
         },
       });
       return
+    }
+
+    // 查询用户优惠券数量
+    try {
+      const couponRes = await getUnusedCouponList();
+      if (couponRes.code === 0 && couponRes.data && couponRes.data.length > 0) {
+        // 用户有优惠券，获取第一张优惠券的ID进行核销
+        const couponList = couponRes.data.filter((d) => d.couponCount > 0);
+        if (couponList?.length > 0) {
+          const couponId = couponList[0].couponType;
+          wx.showLoading({ title: '正在核销优惠券...' });
+
+          const verifyRes = await verifyCoupon(couponId, Number(this.data.eventId));
+          wx.hideLoading();
+
+          if (verifyRes.code !== 0) {
+            // 优惠券核销失败，提示用户
+            wx.showToast({
+              title: verifyRes.msg || '优惠券核销失败',
+              icon: 'none',
+            });
+            // 可以选择是否继续报名，这里选择继续报名
+          }
+        }
+      }
+    } catch (error) {
+      console.error('查询或核销优惠券失败:', error);
+      // 优惠券相关操作失败，不影响活动报名，继续进行下一步
     }
     // 用户已注册，调用注册活动接口
     const { eventId } = this.data;

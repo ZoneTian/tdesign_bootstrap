@@ -696,3 +696,29 @@ export const getCouponPopover = async (): Promise<Res<CouponPopoverData>> => {
   };
   return await request(requestConfig);
 };
+
+// 优惠券核销请求参数类型
+export type VerifyCouponRequest = {
+  couponId: number;
+  activityId: number;
+};
+
+// 优惠券核销响应类型
+export type VerifyCouponResponse = {
+  success: boolean;
+  message?: string;
+  // 可以根据实际返回字段添加更多属性
+};
+
+// 优惠券核销接口
+export const verifyCoupon = async (couponId: number, activityId: number): Promise<Res<VerifyCouponResponse>> => {
+  const requestConfig: RequestOptions = {
+    url: '/v1/mp/coupon/verify',
+    method: 'POST',
+    data: {
+      couponId,
+      activityId
+    }
+  };
+  return await request(requestConfig);
+};
