@@ -248,22 +248,23 @@ Page({
       const heightValue = form?.userHeight?.label
         ? String(form.userHeight.label).replace('cm', '')
         : '';
+      console.log(form.gender, 'zone form.gender');
 
       let registerParams: any = {
-      openId: openid,
-      code: data.code,
-      nickName: form.nickName,
-      gender: form.gender?.value || 0,  // 修正gender值的处理方式
-      userBirthday: form.birthday?.label || '',
-      userHeight: heightValue,
-      userMbti: String(form.userMbti?.label || ''),
-      country: 'CN',
-      school: form.school && form.school.label ? form.school.label : '',
-      language: 'zh_CN',
-      telephone: form.telephone,
-      occupation: String(form.occupation?.label || ''),
-      wechatAccount: form.wechatAccount || '',
-    };
+        openId: openid,
+        code: data.code,
+        nickName: form.nickName,
+        gender: form.gender?.value?.[0] || 0,  // 修正gender值的处理方式
+        userBirthday: form.birthday?.label || '',
+        userHeight: heightValue,
+        userMbti: String(form.userMbti?.label || ''),
+        country: 'CN',
+        school: form.school && form.school.label ? form.school.label : '',
+        language: 'zh_CN',
+        telephone: form.telephone,
+        occupation: String(form.occupation?.label || ''),
+        wechatAccount: form.wechatAccount || '',
+      };
 
       if (form.hometown) {
         const [province, city] = form.hometown.value.toString().split('-');
@@ -427,18 +428,18 @@ Page({
   onSchoolKeywordInput(e: WechatMiniprogram.CustomEvent<{ value: string }>) {
     const keyword = e.detail.value;
     this.setData({ 'schoolSearch.keyword': keyword });
-    
+
     // 防抖处理，避免频繁请求
     DebounceHelper.execute('schoolSearch', async () => {
       if (keyword.trim()) {
         try {
           wx.showLoading({ title: '搜索中...' });
           const res = await getSchoolListAPI(keyword, 1, 10);
-          
+
           if (res.data && res.data.list) {
             const schoolList = res.data.list.map((item: any) => ({
-              label: item.schoolName, 
-              value: item.id 
+              label: item.schoolName,
+              value: item.id
             }));
             this.setData({ 'schoolSearch.list': schoolList });
           }

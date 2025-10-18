@@ -726,7 +726,7 @@ Page({
       // 添加MBTI
       if (form.userMbti) {
         // 直接使用字符串值
-        updateParams.userMbti = form.userMbti;
+        updateParams.userMbti = form.userMbti?.label?.[0];
       }
 
       // 添加职业

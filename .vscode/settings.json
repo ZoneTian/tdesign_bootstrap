@@ -1,7 +1,7 @@
 {
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "[less]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.defaultFormatter": "HookyQR.beautify",
     "editor.formatOnSave": true
   },
   "eslint.enable": true,
