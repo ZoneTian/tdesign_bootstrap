@@ -427,11 +427,11 @@ export type PageInfoWeChatReferrerListVo = {
 
 // 获取推荐用户列表
 export const getReferrerList = async (
-  page: number,
-  pageSize: number = 10,
-): Promise<Res<PageInfoWeChatReferrerListVo>> => {
+  // page: number,
+  // pageSize: number = 10,
+): Promise<Res<ReferrerUserVo[]>> => {
   const requestConfig: RequestOptions = {
-    url: `/v1/mp/user/referrerList?pageNum=${page}&pageSize=${pageSize}`,
+    url: `/v1/mp/user/referrerList`,
     method: 'GET',
   };
   return await requestWithRetry(requestConfig);

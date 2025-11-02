@@ -293,35 +293,43 @@ Page({
     try {
       this.setData({ isLoading: true });
 
-      const res = await getReferrerList(this.data.currentPage, this.data.pageSize);
+      // const res = await getReferrerList(this.data.currentPage, this.data.pageSize);
+      const res = await getReferrerList();
 
       if (res.code === 0 && res.data) {
-        // 如果是第一页，直接设置数据
-        if (this.data.currentPage === 1) {
-          this.setData({
-            referrerList: res.data.list,
-            home: {
-              ...this.data.home,
-              // items: this.formatReferrerListToItems(res.data.list)
-            },
-          });
-        } else {
-          // 如果不是第一页，追加数据
-          const newReferrerList = [...this.data.referrerList, ...res.data.list];
-          this.setData({
-            referrerList: newReferrerList,
-            home: {
-              ...this.data.home,
-              // items: this.formatReferrerListToItems(newReferrerList)
-            },
-          });
-        }
+        this.setData({
+          referrerList: res.data,
+          // home: {
+          //   ...this.data.home,
+          //   // items: this.formatReferrerListToItems(res.data.list)
+          // },
+        });
+        // // 如果是第一页，直接设置数据
+        // if (this.data.currentPage === 1) {
+        //   this.setData({
+        //     referrerList: res.data.list,
+        //     home: {
+        //       ...this.data.home,
+        //       // items: this.formatReferrerListToItems(res.data.list)
+        //     },
+        //   });
+        // } else {
+        //   // 如果不是第一页，追加数据
+        //   const newReferrerList = [...this.data.referrerList, ...res.data.list];
+        //   this.setData({
+        //     referrerList: newReferrerList,
+        //     home: {
+        //       ...this.data.home,
+        //       // items: this.formatReferrerListToItems(newReferrerList)
+        //     },
+        //   });
+        // }
 
         // 判断是否还有更多数据
-        this.setData({
-          hasMore: res.data.list && res.data.list.length === this.data.pageSize,
-          currentPage: this.data.currentPage + 1,
-        });
+        // this.setData({
+        //   hasMore: res.data.list && res.data.list.length === this.data.pageSize,
+        //   currentPage: this.data.currentPage + 1,
+        // });
       } else {
         wx.showToast({
           title: res.msg || '获取推荐用户失败',
