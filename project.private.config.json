@@ -11,11 +11,18 @@
     "miniprogram": {
       "list": [
         {
+          "name": "packageA/pages/events-info/events-info",
+          "pathName": "packageA/pages/events-info/events-info",
+          "query": "id=11",
+          "scene": null,
+          "launchMode": "default"
+        },
+        {
           "name": "packageA/pages/public-profile/public-profile",
           "pathName": "packageA/pages/public-profile/public-profile",
           "query": "userId=111",
-          "scene": null,
-          "launchMode": "default"
+          "launchMode": "default",
+          "scene": null
         },
         {
           "name": "packageA/pages/events-info/events-info",

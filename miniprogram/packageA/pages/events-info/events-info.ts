@@ -338,7 +338,7 @@ Page({
       return;
     }
 
-    if (!app.globalData.isRegistered || app.globalData.userInfo.photoReviewStatus === 0) {
+    if (!app.globalData.isRegistered || app.globalData.userInfo.photoReviewStatus !== 1) {
       const isRegistered = app.globalData.isRegistered;
       // 未授权
       this.setData({
